@@ -1,312 +1,216 @@
-// 1. DATA STORES ENGINE (LOCALSTORAGE CORE MATRIX)
-let employeeDatabase = JSON.parse(localStorage.getItem("employees")) || [];
-let communicationPackets = JSON.parse(localStorage.getItem("portalMessages")) || [];
-let activeSessionProfile = null;
+// ==========================================
+// PORTAL CENTRAL LOGIC CONTROLLER SYSTEM
+// ==========================================
 
-// HARDCODED SECURE ADMIN CONSOLE ACCESS IDENTITIES
-const ROOT_ADMIN_UID = "TECH4145004001";
-const ROOT_ADMIN_TOKEN = "Soumya@7890";
+// 1. CORE SESSION AND PRELOAD CONFIGS
+document.addEventListener("DOMContentLoaded", () => {
+    initClock();
+    initNavigation();
+    initFormAutomation();
+    loadTableData();
+});
 
-// 2. AUTH MODULE PROCESSORS
-function validatePortalAccess() {
-    const idField = document.getElementById("loginId");
-    const passField = document.getElementById("loginPass");
-    const errorLog = document.getElementById("loginErrorFrame");
-
-    const inputUid = idField.value.trim();
-    const inputToken = passField.value.trim();
-
-    if (!inputUid || !inputToken) {
-        errorLog.textContent = "Security Breach: Missing Node Validation Fields.";
-        return;
-    }
-
-    // CHECK A: Identity evaluates to Master Controller Array
-    if (inputUid === ROOT_ADMIN_UID && inputToken === ROOT_ADMIN_TOKEN) {
-        activeSessionProfile = {
-            id: ROOT_ADMIN_UID,
-            name: "Soumya Sir (Admin)",
-            role: "Root System Controller",
-            isAdmin: true
-        };
-        bootInternalPortal();
-        return;
-    }
-
-    // CHECK B: Identity evaluates to Local Data Storage Arrays
-    const linkedEmployee = employeeDatabase.find(emp => emp.id === inputUid && emp.pass === inputToken);
-    if (linkedEmployee) {
-        activeSessionProfile = {
-            id: linkedEmployee.id,
-            name: linkedEmployee.name,
-            role: "Authorized Operator",
-            isAdmin: false
-        };
-        bootInternalPortal();
-    } else {
-        errorLog.textContent = "ACCESS DENIED: INVALID PRIVILEGE PROFILE TOKEN.";
-    }
+// Real-Time System Clock Counter
+function initClock() {
+    const clockElement = document.getElementById("digitalClock");
+    setInterval(() => {
+        const now = new Date();
+        let hours = now.getHours();
+        const minutes = String(now.getMinutes()).padStart(2, "0");
+        const seconds = String(now.getSeconds()).padStart(2, "0");
+        const ampm = hours >= 12 ? "PM" : "AM";
+        
+        hours = hours % 12;
+        hours = hours ? hours : 12; // Midnight configuration rule
+        const formattedHours = String(hours).padStart(2, "0");
+        
+        if (clockElement) {
+            clockElement.textContent = `${formattedHours}:${minutes}:${seconds} ${ampm}`;
+        }
+    }, 1000);
 }
 
-function bootInternalPortal() {
-    // Hide Auth Interface
-    document.getElementById("login-gate").classList.add("hidden");
-    document.getElementById("portal-dashboard").classList.remove("hidden");
-    
-    // Clear Input Errors and buffers
-    document.getElementById("loginId").value = '';
-    document.getElementById("loginPass").value = '';
-    document.getElementById("loginErrorFrame").textContent = '';
+// 2. PRIMARY ROUTING AND NAVIGATION FLOW
+function initNavigation() {
+    const menuItems = document.querySelectorAll(".menu-item");
+    const sections = document.querySelectorAll(".dashboard-section");
 
-    // Print Identity metadata inside status bar
-    document.getElementById("session-user-display").textContent = `${activeSessionProfile.name} [${activeSessionProfile.role}]`;
+    menuItems.forEach(item => {
+        item.addEventListener("click", (e) => {
+            e.preventDefault();
+            const targetSection = item.getAttribute("data-target");
 
-    // Privilege Masking Configuration Loops
-    const adminNodes = document.querySelectorAll(".admin-core");
-    adminNodes.forEach(node => {
-        if (activeSessionProfile.isAdmin) {
-            node.classList.remove("hidden");
+            menuItems.forEach(i => i.classList.remove("active"));
+            sections.forEach(s => s.style.display = "none");
+
+            item.classList.add("active");
+            document.getElementById(targetSection).style.display = "block";
+        });
+    });
+
+    // Theme Mode Switcher
+    document.getElementById("toggleModeBtn").addEventListener("click", () => {
+        document.body.classList.toggle("light-mode");
+        const icon = document.body.classList.contains("light-mode") ? "<i class='fa fa-sun'></i> Light Mode" : "<i class='fa fa-moon'></i> Dark Mode";
+        document.getElementById("toggleModeBtn").innerHTML = icon;
+    });
+
+    // Simple Authentication Portal Logic
+    document.getElementById("loginForm").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const uID = document.getElementById("loginUser").value.trim();
+        const pass = document.getElementById("loginPass").value;
+
+        // Simple hardcoded admin credentials validation
+        if (uID.toLowerCase() === "soumya" && pass === "admin") {
+            document.getElementById("loginPage").style.display = "none";
+            document.getElementById("dashboardPage").style.display = "flex";
+            document.getElementById("sessionUser").textContent = "Soumya Sir (Admin)";
+            showCustomGlassAlert("Authentication Sequence Approved. Secure Session Established.");
         } else {
-            node.classList.add("hidden");
+            showCustomGlassAlert("Access Denied: Invalid Administrative Credentials.");
         }
     });
 
-    const msgNode = document.getElementById("employee-message-node");
-    if (activeSessionProfile.isAdmin) {
-        msgNode.classList.add("hidden"); // Admin panel consumes stream directly
-    } else {
-        msgNode.classList.remove("hidden");
-    }
-
-    // Initialize subsystems pools
-    generateLiveCalendar();
-    syncWorkforceNodesTable();
-    syncInboundMessageQueue();
-    switchTab('home');
-}
-
-// 3. TAB ENGINE AND DESK ROUTER LAYERS
-function switchTab(tabId) {
-    // Escalate security barrier block lines
-    if ((tabId === 'employees' || tabId === 'admin-panel') && !activeSessionProfile.isAdmin) {
-        alert("Privilege Escalation Intercepted: Root Admin required.");
-        return;
-    }
-
-    document.querySelectorAll('.dashboard-section').forEach(sec => sec.classList.remove('active'));
-    document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('active'));
-
-    const targetSection = document.getElementById(`tab-${tabId}`);
-    const targetMenu = document.getElementById(`menu-${tabId}`);
-    
-    if (targetSection) targetSection.classList.add('active');
-    if (targetMenu) targetMenu.classList.add('active');
-
-    // Tab-specific data hot reload
-    if (tabId === 'admin-panel') syncInboundMessageQueue();
-    if (tabId === 'employees') syncWorkforceNodesTable();
-}
-
-// 4. CHRONO DYNAMIC MATRIX LOOP SYSTEM
-function runDigitalClockEngine() {
-    const clock = document.getElementById('digital-clock');
-    if (!clock) return;
-
-    const now = new Date();
-    let hours = now.getHours();
-    const mins = String(now.getMinutes()).padStart(2, '0');
-    const secs = String(now.getSeconds()).padStart(2, '0');
-    const meridian = hours >= 12 ? 'PM' : 'AM';
-
-    hours = hours % 12 || 12;
-    clock.textContent = `${String(hours).padStart(2, '0')}:${mins}:${secs} ${meridian}`;
-}
-setInterval(runDigitalClockEngine, 1000);
-
-// 5. CALENDAR GENERATION PIPELINE MODULES
-function generateLiveCalendar() {
-    const textFrame = document.getElementById('calendar-month-year');
-    const gridFrame = document.getElementById('calendar-days');
-    if (!gridFrame) return;
-
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = now.getMonth();
-    const today = now.getDate();
-
-    const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-    textFrame.textContent = `${months[month]} ${year}`;
-
-    const startDayIndex = new Date(year, month, 1).getDay();
-    const totalDaysInMonth = new Date(year, month + 1, 0).getDate();
-
-    gridFrame.innerHTML = '';
-
-    for (let i = 0; i < startDayIndex; i++) {
-        gridFrame.appendChild(document.createElement('div'));
-    }
-
-    for (let day = 1; day <= totalDaysInMonth; day++) {
-        const cell = document.createElement('div');
-        cell.textContent = day;
-        if (day === today) cell.classList.add('today');
-        gridFrame.appendChild(cell);
-    }
-}
-
-// 6. MESSENGER STREAM PROCESSING CONSOLES
-function transmitMessage() {
-    const textGroup = document.getElementById('msg-text');
-    const msgContent = textGroup.value.trim();
-
-    if (!msgContent) {
-        alert("Transmission Error: Broadcast packet buffer cannot be null.");
-        return;
-    }
-
-    const now = new Date();
-    const newPacket = {
-        timestamp: `${now.toLocaleDateString()} ${now.toLocaleTimeString()}`,
-        senderName: activeSessionProfile.name,
-        senderUid: activeSessionProfile.id,
-        payload: msgContent
-    };
-
-    communicationPackets.push(newPacket);
-    localStorage.setItem("portalMessages", JSON.stringify(communicationPackets));
-    
-    textGroup.value = '';
-    alert("Data Packet Ingestion Successful: Message sent to Admin Console Node.");
-}
-
-function syncInboundMessageQueue() {
-    const streamContainer = document.getElementById('admin-message-stream');
-    if (!streamContainer) return;
-
-    streamContainer.innerHTML = '';
-
-    if (communicationPackets.length === 0) {
-        streamContainer.innerHTML = `
-            <tr id="no-msg-placeholder">
-                <td colspan="4" style="text-align: center; color: var(--text-dim);">No inbound data packets found in current queue.</td>
-            </tr>`;
-        return;
-    }
-
-    communicationPackets.slice().reverse().forEach(packet => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td style="color: var(--accent-glow); font-weight: bold;">${packet.timestamp}</td>
-            <td>${packet.senderName}</td>
-            <td style="color: var(--text-dim); font-family: monospace;">${packet.senderUid}</td>
-            <td style="word-break: break-all;">${packet.payload}</td>
-        `;
-        streamContainer.appendChild(row);
+    // Logout Process
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+        document.getElementById("dashboardPage").style.display = "none";
+        document.getElementById("loginPage").style.display = "flex";
+        document.getElementById("loginForm").reset();
     });
 }
 
-// 7. WORKFORCE PROVISIONING REGISTRY MANAGEMENT SYSTEMS
-function registerNewEmployeeNode() {
-    const nameInp = document.getElementById("regName");
-    const idInp = document.getElementById("regId");
-    const passInp = document.getElementById("regPass");
+// 3. EMPLOYEE CREATION & SYSTEM ID/PASS GENERATION AUTOMATION
+function initFormAutomation() {
+    const fNameInput = document.getElementById("firstName");
+    const lNameInput = document.getElementById("lastName");
+    const uidOutput = document.getElementById("generatedUID");
+    const passOutput = document.getElementById("generatedPassword");
 
-    const empName = nameInp.value.trim();
-    const empId = idInp.value.trim();
-    const empPass = passInp.value.trim();
+    function processCredentialsEngine() {
+        const first = fNameInput.value.trim().toLowerCase();
+        const last = lNameInput.value.trim().toLowerCase();
 
-    if (!empName || !empId || !empPass) {
-        alert("Provision Error: Field validations incomplete.");
-        return;
+        if (first) {
+            // Rule logic: matching naming sequence + unique randomized seed
+            const randomID = Math.floor(1000 + Math.random() * 9000);
+            uidOutput.value = `techm-${first}${last ? last[0] : ""}-${randomID}`;
+
+            // Token Character Sequence Creator
+            const pool = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789@#$";
+            let secureToken = "";
+            for (let i = 0; i < 8; i++) {
+                secureToken += pool.charAt(Math.floor(Math.random() * pool.length));
+            }
+            passOutput.value = secureToken;
+        } else {
+            uidOutput.value = "";
+            passOutput.value = "";
+        }
     }
 
-    // Unique Constraint Validation Intercept
-    const checkDuplicate = employeeDatabase.some(emp => emp.id === empId);
-    if (checkDuplicate || empId === ROOT_ADMIN_UID) {
-        alert("Node Conflict: Unique Target ID signature signature collision detected.");
-        return;
-    }
+    fNameInput.addEventListener("input", processCredentialsEngine);
+    lNameInput.addEventListener("input", processCredentialsEngine);
 
-    const newEmployee = { id: empId, name: empName, pass: empPass };
-    employeeDatabase.push(newEmployee);
-    localStorage.setItem("employees", JSON.stringify(employeeDatabase));
+    // Form submission inside Database Model Arrays
+    document.getElementById("employeeForm").addEventListener("submit", (e) => {
+        e.preventDefault();
+        
+        const newRecord = {
+            uid: uidOutput.value,
+            fullName: `${fNameInput.value.trim()} ${document.getElementById("middleName").value.trim()} ${lNameInput.value.trim()}`,
+            location: `${document.getElementById("empBlock").value.trim()}, ${document.getElementById("empDistrict").value.trim()} (${document.getElementById("empState").value.trim()})`,
+            token: passOutput.value
+        };
 
-    nameInp.value = '';
-    idInp.value = '';
-    passInp.value = '';
+        let localArray = JSON.parse(localStorage.getItem("portalUsers") || "[]");
+        localArray.push(newRecord);
+        localStorage.setItem("portalUsers", JSON.stringify(localArray));
 
-    alert(`Node [${empId}] committed to local engine memory configurations pool successfully.`);
-    syncWorkforceNodesTable();
+        document.getElementById("employeeForm").reset();
+        uidOutput.value = "";
+        passOutput.value = "";
+        
+        loadTableData();
+        showCustomGlassAlert("Success: Employee mapped and committed to Data Registry.");
+    });
+
+    // ❌ DELETE ALL DATA BUTTON TRIGGER
+    document.getElementById("clearAllUsersBtn").addEventListener("click", () => {
+        if(confirm("Are you absolutely sure you want to clear all user records?")) {
+            localStorage.removeItem("portalUsers");
+            loadTableData();
+            showCustomGlassAlert("System Database Purged Successfully.");
+        }
+    });
+
+    // SAMPLE AUTOMATION INJECT DATA ARRAYS
+    document.getElementById("injectSampleBtn").addEventListener("click", () => {
+        const sampleRecords = [
+            { uid: "techm-sudhansu-4948", fullName: "Sudhansu Prida", location: "Banapur, Khordha (Odisha)", token: "xP9#kL2a" },
+            { uid: "techm-soumya-7721", fullName: "Soumya Ranjan", location: "Jatni, Khordha (Odisha)", token: "vM4$qR8e" }
+        ];
+        localStorage.setItem("portalUsers", JSON.stringify(sampleRecords));
+        loadTableData();
+        showCustomGlassAlert("Sample Corps Data Injected into Framework Grid Matrix.");
+    });
+
+    // RE-ADDED LOGIC: Manual Presence Trigger Alert Engine
+    document.getElementById("manualPresentBtn").addEventListener("click", () => {
+        showCustomGlassAlert("ADMIN OVERRIDE: Manual Attendance Logging Interface has been forcefully Enabled.");
+    });
 }
 
-function syncWorkforceNodesTable() {
-    const tbody = document.getElementById("workforce-table-body");
-    if (!tbody) return;
+// 4. RENDERING STORAGE TABLES DATA ENGINE
+function loadTableData() {
+    const tableBody = document.getElementById("employeeTableBody");
+    const localArray = JSON.parse(localStorage.getItem("portalUsers") || "[]");
 
-    tbody.innerHTML = '';
+    if (!tableBody) return;
 
-    if (employeeDatabase.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:var(--text-dim);">No active workforce records mapped in memory tree structure.</td></tr>`;
+    if (localArray.length === 0) {
+        tableBody.innerHTML = `<tr><td colspan="5" class="text-center dimmed">No active workforce records mapped in memory tree structure.</td></tr>`;
         return;
     }
 
-    employeeDatabase.forEach((emp, index) => {
+    tableBody.innerHTML = "";
+    localArray.forEach(user => {
         const row = document.createElement("tr");
         row.innerHTML = `
-            <td style="font-family: monospace; color: var(--accent-glow);">${emp.id}</td>
-            <td><strong>${emp.name}</strong></td>
-            <td style="font-family: monospace; color: var(--text-dim);">••••••••</td>
-            <td><button class="btn-row-delete" onclick="deprovisionNode(${index})">DEPROVISION</button></td>
+            <td style="color: #00f2fe; font-weight: bold;">${user.uid}</td>
+            <td>${user.fullName}</td>
+            <td>${user.location}</td>
+            <td class="dimmed" style="font-family: monospace;">••••••••</td>
+            <td><button class="action-btn-link danger-text" onclick="deleteIndividualUser('${user.uid}')"><i class="fa fa-user-minus"></i> Remove</button></td>
         `;
-        tbody.appendChild(row);
+        tableBody.appendChild(row);
     });
 }
 
-function deprovisionNode(index) {
-    if (confirm(`Deprovision Operation Warning: Delete record connection index [${employeeDatabase[index].id}] permanently?`)) {
-        employeeDatabase.splice(index, 1);
-        localStorage.setItem("employees", JSON.stringify(employeeDatabase));
-        syncWorkforceNodesTable();
-    }
-}
+// Global scope delete helper mapping
+window.deleteIndividualUser = function(uid) {
+    let localArray = JSON.parse(localStorage.getItem("portalUsers") || "[]");
+    localArray = localArray.filter(u => u.uid !== uid);
+    localStorage.setItem("portalUsers", JSON.stringify(localArray));
+    loadTableData();
+    showCustomGlassAlert(`Node ${uid} has been detached.`);
+};
 
-function purgeEntireWorkforceDatabase() {
-    if (confirm("CRITICAL PURGE COMMAND: Flush entire local database memory allocations? This action cannot be reversed.")) {
-        employeeDatabase = [];
-        communicationPackets = [];
-        localStorage.removeItem("employees");
-        localStorage.removeItem("portalMessages");
-        syncWorkforceNodesTable();
-        syncInboundMessageQueue();
-        alert("Data array nodes dropped successfully. All registries are cleared.");
-    }
-}
-
-function seedMockWorkforceData() {
-    if (employeeDatabase.length > 0) {
-        alert("Abort Command: Sample data ingestion requires empty structure registry files.");
-        return;
-    }
-    const samples = [
-        { id: "TECH1001", name: "Amit Kumar Sharma", pass: "Amit@123" },
-        { id: "TECH1002", name: "Priyanka Mohanty", pass: "Pri@456" },
-        { id: "TECH1003", name: "Rajesh Kumar Rout", pass: "Raj@789" }
-    ];
-    employeeDatabase = samples;
-    localStorage.setItem("employees", JSON.stringify(employeeDatabase));
-    syncWorkforceNodesTable();
-    alert("Sample dataset profiles compiled down to active structures registers.");
-}
-
-// 8. ENVIRONMENTAL MODE OVERRIDES & LOGOUT NODE CLOSURES
-function toggleTheme() {
-    document.body.classList.toggle('light-theme');
-    const icon = document.querySelector('.btn-toggle i');
-    icon.className = document.body.classList.contains('light-theme') ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
-}
-
-function shutdownSession() {
-    activeSessionProfile = null;
-    document.getElementById("portal-dashboard").classList.add("hidden");
-    document.getElementById("login-gate").classList.remove("hidden");
+// 5. THE CUSTOM GLASSMORPHISM POPUP REFACTOR ALERT
+function showCustomGlassAlert(msg) {
+    const overlay = document.createElement("div");
+    overlay.className = "glass-alert-overlay";
+    
+    overlay.innerHTML = `
+        <div class="glass-alert-card">
+            <h3 style="color: #00f2fe; font-size:15px; margin-bottom: 12px; font-weight:800;"><i class="fa fa-info-circle"></i> PORTAL MESSAGE</h3>
+            <p style="color: #ffffff; font-size: 13px; line-height: 1.5;">${msg}</p>
+            <button class="glass-alert-btn" id="closeGlassAlertBtn">OK, CONFIRM</button>
+        </div>
+    `;
+    
+    document.body.appendChild(overlay);
+    document.getElementById("closeGlassAlertBtn").addEventListener("click", () => {
+        overlay.remove();
+    });
 }

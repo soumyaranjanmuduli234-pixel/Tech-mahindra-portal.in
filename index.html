@@ -3,221 +3,211 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tech Mahindra Portal - Integrated Master Node</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Tech Mahindra Portal</title>
+    <link rel="stylesheet" href="style.css?v=1.3">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 
-    <div id="login-gate" class="auth-wrapper">
-        <div class="auth-card cyber-glow">
-            <div class="auth-brand">
-                <div class="logo-container">
-                    <img src="logo.png" alt="Tech Mahindra Logo" class="login-brand-logo">
-                    <h1 class="brand-text">TECH MAHINDRA</h1> 
-                </div>
-                <p class="auth-subtitle">Secure Access Node: Quantum-Desk</p>
+    <div id="loginPage" class="auth-container">
+        <div class="auth-card">
+            <div class="logo-area">
+                <img src="logo.png" alt="Tech Mahindra Logo" class="brand-logo">
+                <h2 class="brand-text">TECH MAHINDRA</h2>
+                <p class="auth-subtitle">Admin Login Terminal</p>
             </div>
             
-            <div class="secure-input-group">
-                <input id="loginId" type="text" required placeholder=" ">
-                <label><i class="fa-solid fa-fingerprint"></i> Access Identity (UID)</label>
-            </div>
-            <div class="secure-input-group">
-                <input id="loginPass" type="password" required placeholder=" ">
-                <label><i class="fa-solid fa-key"></i> Authorization Token</label>
-            </div>
-
-            <button class="btn-cyber-glow" onclick="validatePortalAccess()">
-                <i class="fa-solid fa-terminal"></i> ESTABLISH CONNECTION
-            </button>
-            <div id="loginErrorFrame" class="auth-error-log"></div>
+            <form id="loginForm">
+                <div class="secure-input-group">
+                    <i class="fa fa-user input-icon"></i>
+                    <input type="text" id="loginUser" required placeholder="Admin User ID">
+                </div>
+                <div class="secure-input-group">
+                    <i class="fa fa-lock input-icon"></i>
+                    <input type="password" id="loginPass" required placeholder="Admin Password">
+                </div>
+                <button type="submit" class="submit-btn"><i class="fa fa-sign-in-alt"></i> LOGIN TO PORTAL</button>
+            </form>
         </div>
     </div>
 
-    <div id="portal-dashboard" class="portal-container hidden">
+    <div id="dashboardPage" class="dashboard-wrapper" style="display: none;">
+        
         <aside class="sidebar">
             <div class="sidebar-brand">
-                <img src="logo.png" alt="TechM Logo" class="brand-logo">
-                <h2>Tech MDesk</h2>
+                <img src="logo.png" alt="Logo" class="mini-logo">
+                <span>Tech MDesk</span>
             </div>
             <nav class="sidebar-menu">
-                <a href="#" class="menu-item active" id="menu-home" onclick="switchTab('home')"><i class="fa-solid fa-house"></i> Home Base</a>
-                <a href="#" class="menu-item admin-core" id="menu-employees" onclick="switchTab('employees')"><i class="fa-solid fa-users"></i> Employees Master</a>
-                <a href="#" class="menu-item" id="menu-live-desk" onclick="switchTab('live-desk')"><i class="fa-solid fa-id-card-clip"></i> Live Desk</a>
-                <a href="#" class="menu-item admin-core" id="menu-admin" onclick="switchTab('admin-panel')"><i class="fa-solid fa-shield-halved"></i> Admin Console</a>
-                <a href="#" class="menu-item" id="menu-telemetry" onclick="switchTab('telemetry')"><i class="fa-solid fa-terminal"></i> Telemetry Logs</a>
-                <a href="#" class="menu-item" id="menu-reports" onclick="switchTab('reports')"><i class="fa-solid fa-chart-pie"></i> Reports Desk</a>
+                <a href="#" class="menu-item active" data-target="homeSection"><i class="fa fa-home"></i> Home Base</a>
+                <a href="#" class="menu-item" data-target="employeeSection"><i class="fa fa-users"></i> Employees Master</a>
+                <a href="#" class="menu-item" data-target="liveDeskSection"><i class="fa fa-desktop"></i> Live Desk</a>
+                <a href="#" class="menu-item" data-target="adminConsoleSection"><i class="fa fa-shield-alt"></i> Admin Console</a>
+                <a href="#" class="menu-item" data-target="telemetrySection"><i class="fa fa-terminal"></i> Telemetry Logs</a>
+                <a href="#" class="menu-item" data-target="reportsSection"><i class="fa fa-chart-pie"></i> Reports Desk</a>
             </nav>
             <div class="sidebar-footer">
-                <button class="btn-toggle" onclick="toggleTheme()"><i class="fa-solid fa-moon"></i> Toggle Mode</button>
-                <button class="btn-logout" onclick="shutdownSession()"><i class="fa-solid fa-power-off"></i> Logout Node</button>
+                <button id="toggleModeBtn" class="action-btn-link"><i class="fa fa-moon"></i> Toggle Mode</button>
+                <button id="logoutBtn" class="action-btn-link danger-text"><i class="fa fa-power-off"></i> Logout Node</button>
             </div>
         </aside>
 
         <main class="main-content">
             
-            <section id="tab-home" class="dashboard-section active">
-                <div class="hero-clock-matrix">
-                    <div id="digital-clock" class="quantum-clock">00:00:00 PM</div>
-                    <div class="sync-status">
-                        <p><i class="fa-solid fa-satellite-dish"></i> Security Node: <span id="session-user-display" style="color: var(--accent-glow);">Initializing Connection Pool...</span></p>
-                    </div>
-                    <div class="shift-timings">
-                        <p>🌅 <strong>First Half Sync In:</strong> 09:30 AM - 10:30 AM</p>
-                        <p>🌌 <strong>Second Half Sync In:</strong> 02:30 PM - 03:30 PM</p>
-                        <p>🚪 <strong>Standard Checkout:</strong> 06:30 PM Onwards</p>
+            <section id="homeSection" class="dashboard-section">
+                <div class="top-clock-card">
+                    <div id="digitalClock" class="clock-display">00:00:00 PM</div>
+                    <p class="security-note"><i class="fa fa-user-shield"></i> Current Session: <span id="sessionUser">Admin</span> [System Controller]</p>
+                    <div class="sync-times">
+                        <span><i class="fa fa-sun"></i> First Half: 09:30 AM - 10:30 AM</span>
+                        <span><i class="fa fa-cloud-sun"></i> Second Half: 02:30 PM - 03:30 PM</span>
+                        <span><i class="fa fa-sign-out-alt"></i> Checkout: 06:30 PM Onwards</span>
                     </div>
                 </div>
 
-                <div class="home-grid">
-                    <div class="grid-card">
-                        <h3><i class="fa-solid fa-calendar-days"></i> Live Calendar Unit</h3>
-                        <div class="calendar-header">
-                            <span id="calendar-month-year"></span>
-                        </div>
-                        <div class="calendar-weekdays">
-                            <div>Su</div><div>Mo</div><div>Tu</div><div>We</div><div>Th</div><div>Fr</div><div>Sa</div>
-                        </div>
-                        <div id="calendar-days" class="calendar-days-grid"></div>
+                <div class="dashboard-grid">
+                    <div class="glass-panel">
+                        <h3><i class="fa fa-calendar-alt"></i> Live Calendar Unit</h3>
+                        <div class="calendar-placeholder">[ Dynamic Calendar View - May 2026 ]</div>
                     </div>
-
-                    <div class="grid-card">
-                        <h3><i class="fa-solid fa-bullhorn"></i> Notice Board Broadcast</h3>
-                        <div class="broadcast-stream">
-                            <div class="notice-item critical">
-                                <span class="badge">CRITICAL</span>
-                                <p>System Audit schedule updated for the next evaluation loop.</p>
-                                <small>Issued by: Root Admin</small>
-                            </div>
-                            <div class="notice-item info">
-                                <span class="badge">INFO</span>
-                                <p>Ensure all telemetry instances are pushed before standard checkout logs close.</p>
-                                <small>Issued by: Security Node</small>
-                            </div>
+                    <div class="glass-panel">
+                        <h3><i class="fa fa-bullhorn"></i> Notice Board Broadcast</h3>
+                        <div class="notice-item critical">
+                            <span class="badge">CRITICAL</span>
+                            <p>System Audit schedule updated for the next evaluation loop.</p>
                         </div>
-                    </div>
-                </div>
-
-                <div class="grid-card messenger-card" id="employee-message-node">
-                    <h3><i class="fa-solid fa-paper-plane"></i> Employee Messenger Node</h3>
-                    <p class="subtitle">Submit real-time feedback or queries directly to the System Admin control stream.</p>
-                    <div class="messenger-input-group">
-                        <textarea id="msg-text" placeholder="Type your secure transmission broadcast here..."></textarea>
-                        <button class="btn-transmit" onclick="transmitMessage()">
-                            <i class="fa-solid fa-tower-broadcast"></i> Transmit Data Packet
-                        </button>
+                        <div class="notice-item info">
+                            <span class="badge">INFO</span>
+                            <p>Ensure all user instances are pushed before standard checkout logs close.</p>
+                        </div>
                     </div>
                 </div>
             </section>
 
-            <section id="tab-employees" class="dashboard-section admin-core">
-                <div class="section-header">
-                    <h2><i class="fa-solid fa-users"></i> Employees Register Engine</h2>
-                    <p class="subtitle">Create, monitor, and remove workforce node configurations within your local system.</p>
-                </div>
+            <section id="employeeSection" class="dashboard-section" style="display: none;">
+                <h2><i class="fa fa-users-cog"></i> Employees Register Engine</h2>
+                <p class="section-desc">Create, monitor, and manage workforce configuration profiles within your database.</p>
 
-                <div class="employee-workspace-grid">
-                    <div class="grid-card">
-                        <h3><i class="fa-solid fa-user-plus"></i> Provisions New Node</h3>
-                        <div class="form-layout-stack">
-                            <div class="form-element-node">
-                                <label>Employee Name</label>
-                                <input type="text" id="regName" placeholder="Enter Full Name">
+                <div class="dashboard-grid-heavy">
+                    <div class="glass-panel">
+                        <h3><i class="fa fa-user-plus"></i> Add New Employee Profile</h3>
+                        <form id="employeeForm">
+                            <div class="form-row-3">
+                                <div class="secure-input-group">
+                                    <label>First Name</label>
+                                    <input type="text" id="firstName" required placeholder="First Name">
+                                </div>
+                                <div class="secure-input-group">
+                                    <label>Middle Name</label>
+                                    <input type="text" id="middleName" placeholder="Middle Name">
+                                </div>
+                                <div class="secure-input-group">
+                                    <label>Last Name</label>
+                                    <input type="text" id="lastName" required placeholder="Last Name">
+                                </div>
                             </div>
-                            <div class="form-element-node">
-                                <label>Target UID (Unique ID)</label>
-                                <input type="text" id="regId" placeholder="e.g., TECH41482">
+
+                            <div class="form-row-3">
+                                <div class="secure-input-group">
+                                    <label>State</label>
+                                    <input type="text" id="empState" required placeholder="State (e.g. Odisha)">
+                                </div>
+                                <div class="secure-input-group">
+                                    <label>District</label>
+                                    <input type="text" id="empDistrict" required placeholder="District (e.g. Khordha)">
+                                </div>
+                                <div class="secure-input-group">
+                                    <label>Block</label>
+                                    <input type="text" id="empBlock" required placeholder="Block/Tehsil">
+                                </div>
                             </div>
-                            <div class="form-element-node">
-                                <label>Initial Access Token (Password)</label>
-                                <input type="password" id="regPass" placeholder="Set Secure Code">
+
+                            <div class="form-row-2">
+                                <div class="secure-input-group">
+                                    <label>Post Office</label>
+                                    <input type="text" id="empPostOffice" required placeholder="Post Office">
+                                </div>
+                                <div class="secure-input-group">
+                                    <label>Pin Code</label>
+                                    <input type="number" id="empPinCode" required placeholder="752055">
+                                </div>
                             </div>
-                            <button class="btn-action-primary" onclick="registerNewEmployeeNode()">
-                                <i class="fa-solid fa-database"></i> COMMIT TO DATA REGISTRY
-                            </button>
-                        </div>
+
+                            <div class="automation-highlight-box">
+                                <div class="form-row-2">
+                                    <div class="secure-input-group">
+                                        <label><i class="fa fa-id-card"></i> Generated User ID</label>
+                                        <input type="text" id="generatedUID" readonly placeholder="Auto-creates on typing name...">
+                                    </div>
+                                    <div class="secure-input-group">
+                                        <label><i class="fa fa-key"></i> Generated Password</label>
+                                        <input type="text" id="generatedPassword" readonly placeholder="Auto-creates on typing name...">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="submit-btn primary-glow"><i class="fa fa-database"></i> COMMIT TO DATA REGISTRY</button>
+                        </form>
                     </div>
 
-                    <div class="grid-card">
-                        <h3><i class="fa-solid fa-gears"></i> Diagnostic Action Center</h3>
-                        <p class="subtitle" style="margin-bottom: 15px;">Maintain integrity and clear cache states instantly:</p>
-                        <div class="action-btn-cluster">
-                            <button class="btn-action-danger" onclick="purgeEntireWorkforceDatabase()">
-                                <i class="fa-solid fa-dumpster-fire"></i> FLUSH ALL DATA REGISTRIES
-                            </button>
-                            <button class="btn-action-secondary" onclick="seedMockWorkforceData()">
-                                <i class="fa-solid fa-flask"></i> INJECT SAMPLE CORPS ARRAY
-                            </button>
+                    <div class="glass-panel text-center">
+                        <h3><i class="fa fa-cogs"></i> Diagnostic Action Center</h3>
+                        <p class="panel-note">Maintain integrity and clear cache states instantly:</p>
+                        
+                        <button id="clearAllUsersBtn" class="control-btn danger-glow"><i class="fa fa-trash-alt"></i> ❌ DELETE ALL REGISTERED USER IDS</button>
+                        <button id="injectSampleBtn" class="control-btn secondary-glow"><i class="fa fa-vial"></i> INJECT SAMPLE CORPS ARRAY</button>
+                        
+                        <div class="manual-trigger-box">
+                            <h4><i class="fa fa-toggle-on"></i> Attendance Control (Admin Only)</h4>
+                            <p>Manually open or override the active attendance reporting sequence:</p>
+                            <button id="manualPresentBtn" class="control-btn active-glow"><i class="fa fa-user-check"></i> ENABLE MANUAL PRESENT MODE</button>
                         </div>
                     </div>
                 </div>
 
-                <div class="grid-card wide-card" style="margin-top: 30px;">
-                    <h3><i class="fa-solid fa-folder-open"></i> Active Registered Nodes</h3>
-                    <div class="table-container">
-                        <table class="premium-table">
+                <div class="glass-panel table-panel">
+                    <h3><i class="fa fa-table"></i> Active Registered Nodes</h3>
+                    <div class="table-responsive">
+                        <table>
                             <thead>
                                 <tr>
-                                    <th>Node ID</th>
-                                    <th>Registered Full Name</th>
+                                    <th>User ID</th>
+                                    <th>Full Name</th>
+                                    <th>Location Scope</th>
                                     <th>Token Mask</th>
                                     <th>Operational Action</th>
                                 </tr>
                             </thead>
-                            <tbody id="workforce-table-body"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </section>
-
-            <section id="tab-live-desk" class="dashboard-section">
-                <h2><i class="fa-solid fa-id-card-clip"></i> Live Desk Console</h2>
-                <div class="grid-card" style="margin-top: 20px;">
-                    <p style="color: var(--text-dim);">Real-time tracking of workspace activity logs and automated checkout profiles.</p>
-                </div>
-            </section>
-
-            <section id="tab-admin-panel" class="dashboard-section admin-core">
-                <div class="section-header">
-                    <h2><i class="fa-solid fa-shield-halved"></i> System Operational Control Center</h2>
-                </div>
-                <div class="grid-card wide-card" style="margin-top: 20px;">
-                    <h3><i class="fa-solid fa-network-wired"></i> Live Inbound Messenger Stream</h3>
-                    <p class="subtitle">Real-time packet capture streams dispatched from active user interface environments.</p>
-                    <div class="table-container">
-                        <table class="premium-table">
-                            <thead>
+                            <tbody id="employeeTableBody">
                                 <tr>
-                                    <th>Timestamp</th>
-                                    <th>Employee Name</th>
-                                    <th>UID</th>
-                                    <th>Transmitted Message</th>
+                                    <td colspan="5" class="text-center dimmed">No active workforce records mapped in memory tree structure.</td>
                                 </tr>
-                            </thead>
-                            <tbody id="admin-message-stream"></tbody>
+                            </tbody>
                         </table>
                     </div>
                 </div>
             </section>
 
-            <section id="tab-telemetry" class="dashboard-section">
-                <h2><i class="fa-solid fa-terminal"></i> Telemetry Stream Logs</h2>
-                <div class="grid-card" style="margin-top: 20px;">
-                    <p style="color: var(--text-dim);">Core cryptographic events, data serialization loops, and connection checks are recorded here.</p>
-                </div>
+            <section id="liveDeskSection" class="dashboard-section" style="display: none;">
+                <h2><i class="fa fa-desktop"></i> Live Desk Console</h2>
+                <div class="glass-panel"><p class="dimmed">Real-time tracking of workspace activity logs and automated checkout profiles.</p></div>
             </section>
-
-            <section id="tab-reports" class="dashboard-section">
-                <h2><i class="fa-solid fa-chart-pie"></i> Data Analytics Node</h2>
-                <div class="grid-card" style="margin-top: 20px;">
-                    <p style="color: var(--text-dim);">Generate detailed reports and metrics from local session logs.</p>
-                </div>
+            <section id="adminConsoleSection" class="dashboard-section" style="display: none;">
+                <h2><i class="fa fa-shield-alt"></i> System Operational Control Center</h2>
+                <div class="glass-panel"><p class="dimmed">Administrative system overrides, roles, configuration security bounds.</p></div>
+            </section>
+            <section id="telemetrySection" class="dashboard-section" style="display: none;">
+                <h2><i class="fa fa-terminal"></i> Telemetry Stream Logs</h2>
+                <div class="glass-panel"><p class="dimmed">Core cryptographic events, data serialization loops, and connection checks are recorded here.</p></div>
+            </section>
+            <section id="reportsSection" class="dashboard-section" style="display: none;">
+                <h2><i class="fa fa-chart-pie"></i> Data Analytics Node</h2>
+                <div class="glass-panel"><p class="dimmed">Generate detailed reports and metrics from local session logs.</p></div>
             </section>
 
         </main>
     </div>
 
-    <script src="script.js"></script>
+    <script src="script.js?v=1.3"></script>
 </body>
 </html>
