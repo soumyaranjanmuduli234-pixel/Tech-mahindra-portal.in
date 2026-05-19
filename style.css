@@ -612,10 +612,19 @@ body {
     background-color: rgba(0, 242, 254, 0.03);
 }
 
-/* Responsive Scaling Viewports */
 @media (max-width: 768px) {
-    .portal-container { flex-direction: column; }
-    .sidebar { width: 100%; height: auto; border-right: none; border-bottom: 1px solid var(--border-dark); }
-    .main-content { height: auto; padding: 20px; }
-    .quantum-clock { font-size: 36px; }
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: -100%; /* Shuruat mein screen ke baahar chupa rahega */
+        width: 250px;
+        height: 100vh;
+        z-index: 999;
+        transition: left 0.3s ease-in-out;
+    }
+
+    /* Jab JavaScript se '.active' class add hogi toh bahar aayega */
+    .sidebar.active {
+        left: 0;
+    }
 }
