@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tech Mahindra Portal - Quantum v5.0</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div id="loadingMatrix" class="hidden">
+    <div class="matrix-loader">
+        <div class="quantum-pulse"></div>
+        <h2 class="neon-text">SYSTEM INITIALIZING...</h2>
+        <p id="loadingStatus">Bypassing Security Layers...</p>
+        <div class="loading-bar-container"><div class="loading-bar-progress"></div></div>
+    </div>
+</div>
+
+<div id="loginPage" class="auth-container">
+    <div class="glass-card auth-box cyber-glow">
+        <div class="logo-area">
+            <img src="logo.png" alt="Tech Mahindra Logo" class="auth-logo-ultra">
+            <h1 class="portal-title">TECH MAHINDRA</h1>
+            <p class="subtitle">Secure Node: Quantum-Enterprise</p>
+        </div>
+        
+        <div class="input-group">
+            <input id="loginId" type="text" required placeholder=" ">
+            <label>Access Identity (UID)</label>
+        </div>
+        <div class="input-group">
+            <input id="loginPass" type="password" required placeholder=" ">
+            <label>Authorization Token</label>
+        </div>
+
+        <div class="btn-group">
+            <button class="btn btn-glow-primary" onclick="initiateSecureLogin()">ESTABLISH CONNECTION</button>
+        </div>
+        <div id="loginMsg" class="error-msg"></div>
+    </div>
+</div>
+
+<div id="dashboard" class="dashboard-layout hidden">
+    <aside class="sidebar cyber-border-right">
+        <div class="sidebar-header">
+            <img src="logo.png" alt="Logo" class="sidebar-logo-premium">
+            <h3 class="neon-text">TECH M-DESK</h3>
+        </div>
+        <nav class="nav-menu">
+            <button id="nav-home" class="nav-btn active" onclick="showPage('home', event)">🏠 Command Base</button>
+            <button id="nav-employees" class="nav-btn admin-only" onclick="showPage('employees', event)">👥 Workforce Directory</button>
+            <button id="nav-attendance" class="nav-btn" onclick="showPage('attendance', event)">📅 Presence Registry</button>
+            <button id="nav-messenger" class="nav-btn" onclick="showPage('messenger', event)">💬 Communication Node</button>
+            <button id="nav-control" class="nav-btn admin-only" onclick="showPage('control', event)">⚙️ System Core Panel</button>
+            <button id="nav-report" class="nav-btn" onclick="showPage('report', event)">📊 Telemetry Reports</button>
+        </nav>
+        <div class="sidebar-footer">
+            <button class="action-btn-glow" onclick="toggleTheme()">🌗 Phase Toggle</button>
+            <button class="action-btn-glow logout-btn" onclick="logout()">🚪 Decommission Node</button>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <section id="homePage" class="dashboard-page"></section>
+        
+        <section id="employeesPage" class="dashboard-page hidden">
+            <h2 class="page-title neon-text">Authorized Workforce Roster</h2>
+            <div id="empList" class="grid-layout"></div>
+        </section>
+        
+        <section id="attendancePage" class="dashboard-page hidden">
+            <h2 class="page-title neon-text">Active Presence Desk</h2>
+            <div id="attendanceStatusMsg" class="status-alert"></div>
+            <div id="attendanceList" class="grid-layout"></div>
+        </section>
+
+        <section id="messengerPage" class="dashboard-page hidden">
+            <h2 class="page-title neon-text">Communication Node</h2>
+            <div class="messenger-container">
+                <div id="employeeMsgBox" class="glass-card messenger-box">
+                    <h3>Transmit Message to Core</h3>
+                    <textarea id="msgContent" placeholder="Enter your transmission details here..."></textarea>
+                    <button class="btn btn-glow-success" onclick="sendMessage()">DEPLOY TRANSMISSION</button>
+                </div>
+                <div id="adminMsgBox" class="admin-only hidden">
+                    <h3>Incoming Transmissions</h3>
+                    <div id="messageStream" class="message-stream"></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="controlPage" class="dashboard-page hidden">
+            <h2 class="page-title neon-text">System Core Override</h2>
+            <div class="admin-grid">
+                <div class="glass-card control-node">
+                    <h3>Notice Broadcast</h3>
+                    <input id="broadcastMsg" placeholder="Enter global notice...">
+                    <button class="btn btn-glow-primary" onclick="setBroadcast()">EMIT BROADCAST</button>
+                </div>
+                <div class="glass-card control-node">
+                    <h3>Window Bypass</h3>
+                    <button id="bypassBtn" class="btn btn-glow-secondary" onclick="toggleAdminBypass()">STATE: INACTIVE</button>
+                </div>
+            </div>
+        </section>
+        
+        <section id="reportPage" class="dashboard-page hidden">
+            <h2 class="page-title neon-text">Telemetry Data Export</h2>
+            <div class="glass-card report-node">
+                <p>Compile and decrypt monthly presence ledgers for verification.</p>
+                <button class="btn btn-glow-primary" onclick="downloadReport()">📥 EXTRACT PDF LEDGER</button>
+            </div>
+        </section>
+    </main>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
