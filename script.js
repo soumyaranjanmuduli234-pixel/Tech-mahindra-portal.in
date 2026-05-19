@@ -1,162 +1,312 @@
-(function () {
-    let employees = JSON.parse(localStorage.getItem("employees")) || [];
-    let messages = JSON.parse(localStorage.getItem("portalMessages")) || [];
-    let globalBroadcast = localStorage.getItem("globalBroadcast") || "Welcome to Tech Mahindra Command Center.";
-    let currentSessionUser = null;
-    let adminBypassActive = false;
+// 1. DATA STORES ENGINE (LOCALSTORAGE CORE MATRIX)
+let employeeDatabase = JSON.parse(localStorage.getItem("employees")) || [];
+let communicationPackets = JSON.parse(localStorage.getItem("portalMessages")) || [];
+let activeSessionProfile = null;
 
-    // Credentials Mask
-    const _0x4a21 = "VEVDSDQxNDUwMDQwMDE="; // Admin UID
-    const _0x91b2 = "U291bXlhQDc4OTA=";     // Admin Pass
+// HARDCODED SECURE ADMIN CONSOLE ACCESS IDENTITIES
+const ROOT_ADMIN_UID = "TECH4145004001";
+const ROOT_ADMIN_TOKEN = "Soumya@7890";
 
-    const getCreds = (t) => atob(t);
+// 2. AUTH MODULE PROCESSORS
+function validatePortalAccess() {
+    const idField = document.getElementById("loginId");
+    const passField = document.getElementById("loginPass");
+    const errorLog = document.getElementById("loginErrorFrame");
 
-    // 10-Second Mandatory Loading Protocol
-    window.initiateSecureLogin = function () {
-        const id = document.getElementById("loginId").value.trim();
-        const pass = document.getElementById("loginPass").value.trim();
-        
-        if(!id || !pass) { alert("Access Identity Required."); return; }
+    const inputUid = idField.value.trim();
+    const inputToken = passField.value.trim();
 
-        document.getElementById("loadingMatrix").classList.remove("hidden");
-        const statusText = document.getElementById("loadingStatus");
-        
-        const phases = [
-            "Authenticating Bio-metric Node...",
-            "Encrypting Quantum Tunnel...",
-            "Syncing workforce telemetry...",
-            "Finalizing Security Handshake..."
-        ];
-
-        let p = 0;
-        const interval = setInterval(() => {
-            statusText.innerText = phases[p++];
-            if(p >= phases.length) clearInterval(interval);
-        }, 2500);
-
-        setTimeout(() => processLogin(id, pass), 10000);
-    };
-
-    function processLogin(id, pass) {
-        document.getElementById("loadingMatrix").classList.add("hidden");
-        
-        if (id === getCreds(_0x4a21) && pass === getCreds(_0x91b2)) {
-            currentSessionUser = { id, name: "Admin Soumya", role: "Root Controller", isAdmin: true };
-            openDashboard();
-        } else {
-            let user = employees.find(e => e.id === id && e.pass === pass);
-            if (user) {
-                currentSessionUser = { ...user, isAdmin: false };
-                openDashboard();
-            } else {
-                document.getElementById("loginMsg").innerText = "UNAUTHORIZED ACCESS ATTEMPT DETECTED.";
-            }
-        }
+    if (!inputUid || !inputToken) {
+        errorLog.textContent = "Security Breach: Missing Node Validation Fields.";
+        return;
     }
 
-    function openDashboard() {
-        document.getElementById("loginPage").classList.add("hidden");
-        document.getElementById("dashboard").classList.remove("hidden");
-        
-        document.querySelectorAll(".admin-only").forEach(el => {
-            currentSessionUser.isAdmin ? el.classList.remove("hidden") : el.classList.add("hidden");
-        });
-
-        showPage('home');
-        renderClock();
-    }
-
-    // High-End Home Interface
-    function renderHome() {
-        const now = new Date();
-        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        
-        document.getElementById("homePage").innerHTML = `
-            <div class="home-grid">
-                <div class="glass-card clock-box">
-                    <h2 class="clock-display" id="liveTime">00:00:00</h2>
-                    <p class="neon-text">${now.toLocaleDateString(undefined, options)}</p>
-                </div>
-                <div class="glass-card broadcast-box cyber-glow">
-                    <h3 class="neon-text">📡 CORE BROADCAST</h3>
-                    <p style="font-size: 1.2rem; margin-top: 15px; line-height: 1.6;">${globalBroadcast}</p>
-                </div>
-                <div class="glass-card">
-                    <h3 class="neon-text">⚡ SYSTEM WINDOWS</h3>
-                    <div style="margin-top: 15px; line-height: 2;">
-                        <p>🔹 FIRST HALF: 09:30 - 10:30 AM</p>
-                        <p>🔹 SECOND HALF: 02:30 - 03:30 PM</p>
-                        <p>🔹 CHECKOUT: 06:30 PM ONWARDS</p>
-                    </div>
-                </div>
-                <div class="glass-card">
-                    <h3 class="neon-text">🛡️ OPERATIONAL STATUS</h3>
-                    <p style="margin-top: 15px;">User: ${currentSessionUser.name}</p>
-                    <p>Status: <span style="color: #00f2ff;">ACTIVE NODE</span></p>
-                </div>
-            </div>
-        `;
-    }
-
-    // Messaging Logic
-    window.sendMessage = function() {
-        const text = document.getElementById("msgContent").value.trim();
-        if(!text) return;
-        
-        const newMsg = {
-            sender: currentSessionUser.name,
-            uid: currentSessionUser.id,
-            content: text,
-            date: new Date().toLocaleDateString(),
-            time: new Date().toLocaleTimeString()
+    // CHECK A: Identity evaluates to Master Controller Array
+    if (inputUid === ROOT_ADMIN_UID && inputToken === ROOT_ADMIN_TOKEN) {
+        activeSessionProfile = {
+            id: ROOT_ADMIN_UID,
+            name: "Soumya Sir (Admin)",
+            role: "Root System Controller",
+            isAdmin: true
         };
-
-        messages.push(newMsg);
-        localStorage.setItem("portalMessages", JSON.stringify(messages));
-        document.getElementById("msgContent").value = "";
-        alert("Transmission sent successfully.");
-    };
-
-    function renderMessages() {
-        const stream = document.getElementById("messageStream");
-        stream.innerHTML = "";
-        messages.slice().reverse().forEach(m => {
-            stream.innerHTML += `
-                <div class="msg-card">
-                    <p><b class="neon-text">${m.sender}</b> (${m.uid})</p>
-                    <p style="margin: 10px 0;">${m.content}</p>
-                    <p style="font-size: 0.8rem; color: var(--text-muted);">${m.date} | ${m.time}</p>
-                </div>
-            `;
-        });
+        bootInternalPortal();
+        return;
     }
 
-    // Standard Controls
-    window.showPage = function(page, event) {
-        document.querySelectorAll(".dashboard-page").forEach(p => p.classList.add("hidden"));
-        document.getElementById(page + "Page").classList.remove("hidden");
-        
-        if(event) {
-            document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
-            event.target.classList.add("active");
+    // CHECK B: Identity evaluates to Local Data Storage Arrays
+    const linkedEmployee = employeeDatabase.find(emp => emp.id === inputUid && emp.pass === inputToken);
+    if (linkedEmployee) {
+        activeSessionProfile = {
+            id: linkedEmployee.id,
+            name: linkedEmployee.name,
+            role: "Authorized Operator",
+            isAdmin: false
+        };
+        bootInternalPortal();
+    } else {
+        errorLog.textContent = "ACCESS DENIED: INVALID PRIVILEGE PROFILE TOKEN.";
+    }
+}
+
+function bootInternalPortal() {
+    // Hide Auth Interface
+    document.getElementById("login-gate").classList.add("hidden");
+    document.getElementById("portal-dashboard").classList.remove("hidden");
+    
+    // Clear Input Errors and buffers
+    document.getElementById("loginId").value = '';
+    document.getElementById("loginPass").value = '';
+    document.getElementById("loginErrorFrame").textContent = '';
+
+    // Print Identity metadata inside status bar
+    document.getElementById("session-user-display").textContent = `${activeSessionProfile.name} [${activeSessionProfile.role}]`;
+
+    // Privilege Masking Configuration Loops
+    const adminNodes = document.querySelectorAll(".admin-core");
+    adminNodes.forEach(node => {
+        if (activeSessionProfile.isAdmin) {
+            node.classList.remove("hidden");
+        } else {
+            node.classList.add("hidden");
         }
+    });
 
-        if(page === 'home') renderHome();
-        if(page === 'messenger' && currentSessionUser.isAdmin) {
-            document.getElementById("employeeMsgBox").classList.add("hidden");
-            document.getElementById("adminMsgBox").classList.remove("hidden");
-            renderMessages();
-        }
-    };
-
-    window.toggleTheme = () => document.body.classList.toggle("light");
-    window.logout = () => location.reload();
-
-    function renderClock() {
-        setInterval(() => {
-            const clock = document.getElementById("liveTime");
-            if(clock) clock.innerText = new Date().toLocaleTimeString();
-        }, 1000);
+    const msgNode = document.getElementById("employee-message-node");
+    if (activeSessionProfile.isAdmin) {
+        msgNode.classList.add("hidden"); // Admin panel consumes stream directly
+    } else {
+        msgNode.classList.remove("hidden");
     }
 
-})();
+    // Initialize subsystems pools
+    generateLiveCalendar();
+    syncWorkforceNodesTable();
+    syncInboundMessageQueue();
+    switchTab('home');
+}
+
+// 3. TAB ENGINE AND DESK ROUTER LAYERS
+function switchTab(tabId) {
+    // Escalate security barrier block lines
+    if ((tabId === 'employees' || tabId === 'admin-panel') && !activeSessionProfile.isAdmin) {
+        alert("Privilege Escalation Intercepted: Root Admin required.");
+        return;
+    }
+
+    document.querySelectorAll('.dashboard-section').forEach(sec => sec.classList.remove('active'));
+    document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('active'));
+
+    const targetSection = document.getElementById(`tab-${tabId}`);
+    const targetMenu = document.getElementById(`menu-${tabId}`);
+    
+    if (targetSection) targetSection.classList.add('active');
+    if (targetMenu) targetMenu.classList.add('active');
+
+    // Tab-specific data hot reload
+    if (tabId === 'admin-panel') syncInboundMessageQueue();
+    if (tabId === 'employees') syncWorkforceNodesTable();
+}
+
+// 4. CHRONO DYNAMIC MATRIX LOOP SYSTEM
+function runDigitalClockEngine() {
+    const clock = document.getElementById('digital-clock');
+    if (!clock) return;
+
+    const now = new Date();
+    let hours = now.getHours();
+    const mins = String(now.getMinutes()).padStart(2, '0');
+    const secs = String(now.getSeconds()).padStart(2, '0');
+    const meridian = hours >= 12 ? 'PM' : 'AM';
+
+    hours = hours % 12 || 12;
+    clock.textContent = `${String(hours).padStart(2, '0')}:${mins}:${secs} ${meridian}`;
+}
+setInterval(runDigitalClockEngine, 1000);
+
+// 5. CALENDAR GENERATION PIPELINE MODULES
+function generateLiveCalendar() {
+    const textFrame = document.getElementById('calendar-month-year');
+    const gridFrame = document.getElementById('calendar-days');
+    if (!gridFrame) return;
+
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth();
+    const today = now.getDate();
+
+    const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    textFrame.textContent = `${months[month]} ${year}`;
+
+    const startDayIndex = new Date(year, month, 1).getDay();
+    const totalDaysInMonth = new Date(year, month + 1, 0).getDate();
+
+    gridFrame.innerHTML = '';
+
+    for (let i = 0; i < startDayIndex; i++) {
+        gridFrame.appendChild(document.createElement('div'));
+    }
+
+    for (let day = 1; day <= totalDaysInMonth; day++) {
+        const cell = document.createElement('div');
+        cell.textContent = day;
+        if (day === today) cell.classList.add('today');
+        gridFrame.appendChild(cell);
+    }
+}
+
+// 6. MESSENGER STREAM PROCESSING CONSOLES
+function transmitMessage() {
+    const textGroup = document.getElementById('msg-text');
+    const msgContent = textGroup.value.trim();
+
+    if (!msgContent) {
+        alert("Transmission Error: Broadcast packet buffer cannot be null.");
+        return;
+    }
+
+    const now = new Date();
+    const newPacket = {
+        timestamp: `${now.toLocaleDateString()} ${now.toLocaleTimeString()}`,
+        senderName: activeSessionProfile.name,
+        senderUid: activeSessionProfile.id,
+        payload: msgContent
+    };
+
+    communicationPackets.push(newPacket);
+    localStorage.setItem("portalMessages", JSON.stringify(communicationPackets));
+    
+    textGroup.value = '';
+    alert("Data Packet Ingestion Successful: Message sent to Admin Console Node.");
+}
+
+function syncInboundMessageQueue() {
+    const streamContainer = document.getElementById('admin-message-stream');
+    if (!streamContainer) return;
+
+    streamContainer.innerHTML = '';
+
+    if (communicationPackets.length === 0) {
+        streamContainer.innerHTML = `
+            <tr id="no-msg-placeholder">
+                <td colspan="4" style="text-align: center; color: var(--text-dim);">No inbound data packets found in current queue.</td>
+            </tr>`;
+        return;
+    }
+
+    communicationPackets.slice().reverse().forEach(packet => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td style="color: var(--accent-glow); font-weight: bold;">${packet.timestamp}</td>
+            <td>${packet.senderName}</td>
+            <td style="color: var(--text-dim); font-family: monospace;">${packet.senderUid}</td>
+            <td style="word-break: break-all;">${packet.payload}</td>
+        `;
+        streamContainer.appendChild(row);
+    });
+}
+
+// 7. WORKFORCE PROVISIONING REGISTRY MANAGEMENT SYSTEMS
+function registerNewEmployeeNode() {
+    const nameInp = document.getElementById("regName");
+    const idInp = document.getElementById("regId");
+    const passInp = document.getElementById("regPass");
+
+    const empName = nameInp.value.trim();
+    const empId = idInp.value.trim();
+    const empPass = passInp.value.trim();
+
+    if (!empName || !empId || !empPass) {
+        alert("Provision Error: Field validations incomplete.");
+        return;
+    }
+
+    // Unique Constraint Validation Intercept
+    const checkDuplicate = employeeDatabase.some(emp => emp.id === empId);
+    if (checkDuplicate || empId === ROOT_ADMIN_UID) {
+        alert("Node Conflict: Unique Target ID signature signature collision detected.");
+        return;
+    }
+
+    const newEmployee = { id: empId, name: empName, pass: empPass };
+    employeeDatabase.push(newEmployee);
+    localStorage.setItem("employees", JSON.stringify(employeeDatabase));
+
+    nameInp.value = '';
+    idInp.value = '';
+    passInp.value = '';
+
+    alert(`Node [${empId}] committed to local engine memory configurations pool successfully.`);
+    syncWorkforceNodesTable();
+}
+
+function syncWorkforceNodesTable() {
+    const tbody = document.getElementById("workforce-table-body");
+    if (!tbody) return;
+
+    tbody.innerHTML = '';
+
+    if (employeeDatabase.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:var(--text-dim);">No active workforce records mapped in memory tree structure.</td></tr>`;
+        return;
+    }
+
+    employeeDatabase.forEach((emp, index) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+            <td style="font-family: monospace; color: var(--accent-glow);">${emp.id}</td>
+            <td><strong>${emp.name}</strong></td>
+            <td style="font-family: monospace; color: var(--text-dim);">••••••••</td>
+            <td><button class="btn-row-delete" onclick="deprovisionNode(${index})">DEPROVISION</button></td>
+        `;
+        tbody.appendChild(row);
+    });
+}
+
+function deprovisionNode(index) {
+    if (confirm(`Deprovision Operation Warning: Delete record connection index [${employeeDatabase[index].id}] permanently?`)) {
+        employeeDatabase.splice(index, 1);
+        localStorage.setItem("employees", JSON.stringify(employeeDatabase));
+        syncWorkforceNodesTable();
+    }
+}
+
+function purgeEntireWorkforceDatabase() {
+    if (confirm("CRITICAL PURGE COMMAND: Flush entire local database memory allocations? This action cannot be reversed.")) {
+        employeeDatabase = [];
+        communicationPackets = [];
+        localStorage.removeItem("employees");
+        localStorage.removeItem("portalMessages");
+        syncWorkforceNodesTable();
+        syncInboundMessageQueue();
+        alert("Data array nodes dropped successfully. All registries are cleared.");
+    }
+}
+
+function seedMockWorkforceData() {
+    if (employeeDatabase.length > 0) {
+        alert("Abort Command: Sample data ingestion requires empty structure registry files.");
+        return;
+    }
+    const samples = [
+        { id: "TECH1001", name: "Amit Kumar Sharma", pass: "Amit@123" },
+        { id: "TECH1002", name: "Priyanka Mohanty", pass: "Pri@456" },
+        { id: "TECH1003", name: "Rajesh Kumar Rout", pass: "Raj@789" }
+    ];
+    employeeDatabase = samples;
+    localStorage.setItem("employees", JSON.stringify(employeeDatabase));
+    syncWorkforceNodesTable();
+    alert("Sample dataset profiles compiled down to active structures registers.");
+}
+
+// 8. ENVIRONMENTAL MODE OVERRIDES & LOGOUT NODE CLOSURES
+function toggleTheme() {
+    document.body.classList.toggle('light-theme');
+    const icon = document.querySelector('.btn-toggle i');
+    icon.className = document.body.classList.contains('light-theme') ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+}
+
+function shutdownSession() {
+    activeSessionProfile = null;
+    document.getElementById("portal-dashboard").classList.add("hidden");
+    document.getElementById("login-gate").classList.remove("hidden");
+}

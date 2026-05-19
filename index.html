@@ -3,38 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tech Mahindra Portal - Cyber Defense Node</title>
+    <title>Tech Mahindra Portal - Integrated Master Node</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <div class="portal-container">
+
+    <div id="login-gate" class="auth-wrapper">
+        <div class="auth-card cyber-glow">
+            <div class="auth-brand">
+                <img src="logo.png" alt="TechM Logo" class="auth-logo-premium">
+                <h1>TECH MAHINDRA</h1>
+                <p class="auth-subtitle">Secure Access Node: Quantum-Desk</p>
+            </div>
+            
+            <div class="secure-input-group">
+                <input id="loginId" type="text" required placeholder=" ">
+                <label><i class="fa-solid fa-fingerprint"></i> Access Identity (UID)</label>
+            </div>
+            <div class="secure-input-group">
+                <input id="loginPass" type="password" required placeholder=" ">
+                <label><i class="fa-solid fa-key"></i> Authorization Token</label>
+            </div>
+
+            <button class="btn-cyber-glow" onclick="validatePortalAccess()">
+                <i class="fa-solid fa-terminal"></i> ESTABLISH CONNECTION
+            </button>
+            <div id="loginErrorFrame" class="auth-error-log"></div>
+        </div>
+    </div>
+
+    <div id="portal-dashboard" class="portal-container hidden">
         <aside class="sidebar">
             <div class="sidebar-brand">
                 <img src="logo.png" alt="TechM Logo" class="brand-logo">
                 <h2>Tech MDesk</h2>
             </div>
             <nav class="sidebar-menu">
-                <a href="#" class="menu-item active" onclick="switchTab('home')"><i class="fa-solid fa-house"></i> Home Base</a>
-                <a href="#" class="menu-item" onclick="switchTab('employees')"><i class="fa-solid fa-users"></i> Employees Master</a>
-                <a href="#" class="menu-item" onclick="switchTab('live-desk')"><i class="fa-solid fa-id-card-clip"></i> Live Desk</a>
-                <a href="#" class="menu-item" onclick="switchTab('admin-panel')"><i class="fa-solid fa-shield-halved"></i> Admin Control Console</a>
-                <a href="#" class="menu-item" onclick="switchTab('telemetry')"><i class="fa-solid fa-terminal"></i> Telemetry Logs</a>
-                <a href="#" class="menu-item" onclick="switchTab('reports')"><i class="fa-solid fa-chart-pie"></i> Reports Desk</a>
+                <a href="#" class="menu-item active" id="menu-home" onclick="switchTab('home')"><i class="fa-solid fa-house"></i> Home Base</a>
+                <a href="#" class="menu-item admin-core" id="menu-employees" onclick="switchTab('employees')"><i class="fa-solid fa-users"></i> Employees Master</a>
+                <a href="#" class="menu-item" id="menu-live-desk" onclick="switchTab('live-desk')"><i class="fa-solid fa-id-card-clip"></i> Live Desk</a>
+                <a href="#" class="menu-item admin-core" id="menu-admin" onclick="switchTab('admin-panel')"><i class="fa-solid fa-shield-halved"></i> Admin Console</a>
+                <a href="#" class="menu-item" id="menu-telemetry" onclick="switchTab('telemetry')"><i class="fa-solid fa-terminal"></i> Telemetry Logs</a>
+                <a href="#" class="menu-item" id="menu-reports" onclick="switchTab('reports')"><i class="fa-solid fa-chart-pie"></i> Reports Desk</a>
             </nav>
             <div class="sidebar-footer">
                 <button class="btn-toggle" onclick="toggleTheme()"><i class="fa-solid fa-moon"></i> Toggle Mode</button>
-                <button class="btn-logout"><i class="fa-solid fa-power-off"></i> Logout Node</button>
+                <button class="btn-logout" onclick="shutdownSession()"><i class="fa-solid fa-power-off"></i> Logout Node</button>
             </div>
         </aside>
 
         <main class="main-content">
+            
             <section id="tab-home" class="dashboard-section active">
                 <div class="hero-clock-matrix">
                     <div id="digital-clock" class="quantum-clock">00:00:00 PM</div>
                     <div class="sync-status">
-                        <p><i class="fa-solid fa-satellite-dish"></i> Portal Node Operational</p>
-                        <small>Target: Soumya Sir (Admin) (System Administrator)</small>
+                        <p><i class="fa-solid fa-satellite-dish"></i> Security Node: <span id="session-user-display" style="color: var(--accent-glow);">Initializing Connection Pool...</span></p>
                     </div>
                     <div class="shift-timings">
                         <p>🌅 <strong>First Half Sync In:</strong> 09:30 AM - 10:30 AM</p>
@@ -44,19 +69,18 @@
                 </div>
 
                 <div class="home-grid">
-                    <div class="grid-card calendar-card">
+                    <div class="grid-card">
                         <h3><i class="fa-solid fa-calendar-days"></i> Live Calendar Unit</h3>
                         <div class="calendar-header">
-                            <span id="calendar-month-year">May 2026</span>
+                            <span id="calendar-month-year"></span>
                         </div>
                         <div class="calendar-weekdays">
                             <div>Su</div><div>Mo</div><div>Tu</div><div>We</div><div>Th</div><div>Fr</div><div>Sa</div>
                         </div>
-                        <div id="calendar-days" class="calendar-days-grid">
-                            </div>
+                        <div id="calendar-days" class="calendar-days-grid"></div>
                     </div>
 
-                    <div class="grid-card notice-card">
+                    <div class="grid-card">
                         <h3><i class="fa-solid fa-bullhorn"></i> Notice Board Broadcast</h3>
                         <div class="broadcast-stream">
                             <div class="notice-item critical">
@@ -73,12 +97,10 @@
                     </div>
                 </div>
 
-                <div class="grid-card messenger-card">
+                <div class="grid-card messenger-card" id="employee-message-node">
                     <h3><i class="fa-solid fa-paper-plane"></i> Employee Messenger Node</h3>
                     <p class="subtitle">Submit real-time feedback or queries directly to the System Admin control stream.</p>
                     <div class="messenger-input-group">
-                        <input type="text" id="msg-emp-name" placeholder="Your Full Name">
-                        <input type="text" id="msg-emp-id" placeholder="Employee UID (e.g., TECH41482)">
                         <textarea id="msg-text" placeholder="Type your secure transmission broadcast here..."></textarea>
                         <button class="btn-transmit" onclick="transmitMessage()">
                             <i class="fa-solid fa-tower-broadcast"></i> Transmit Data Packet
@@ -87,42 +109,112 @@
                 </div>
             </section>
 
-            <section id="tab-admin-panel" class="dashboard-section">
+            <section id="tab-employees" class="dashboard-section admin-core">
                 <div class="section-header">
-                    <h2><i class="fa-solid fa-shield-halved"></i> System Operational Control Center</h2>
-                    <span class="status-pill verified">Root Admin Privileges: Verified</span>
+                    <h2><i class="fa-solid fa-users"></i> Employees Register Engine</h2>
+                    <p class="subtitle">Create, monitor, and remove workforce node configurations within your local system.</p>
                 </div>
-                
-                <div class="admin-grid">
-                    <div class="grid-card wide-card">
-                        <h3><i class="fa-solid fa-network-wired"></i> Live Inbound Messenger Stream</h3>
-                        <p class="subtitle">Real-time telemetry packet collection from active employee terminals.</p>
-                        <div class="table-container">
-                            <table class="premium-table">
-                                <thead>
-                                    <tr>
-                                        <th>Timestamp</th>
-                                        <th>Employee Name</th>
-                                        <th>UID</th>
-                                        <th>Transmitted Message</th>
-                                        <th>Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="admin-message-stream">
-                                    <tr id="no-msg-placeholder">
-                                        <td colspan="5" style="text-align: center; color: var(--text-dim);">No inbound data packets found in current queue.</td>
-                                    </tr>
-                                </tbody>
-                            </table>
+
+                <div class="employee-workspace-grid">
+                    <div class="grid-card">
+                        <h3><i class="fa-solid fa-user-plus"></i> Provisions New Node</h3>
+                        <div class="form-layout-stack">
+                            <div class="form-element-node">
+                                <label>Employee Name</label>
+                                <input type="text" id="regName" placeholder="Enter Full Name">
+                            </div>
+                            <div class="form-element-node">
+                                <label>Target UID (Unique ID)</label>
+                                <input type="text" id="regId" placeholder="e.g., TECH41482">
+                            </div>
+                            <div class="form-element-node">
+                                <label>Initial Access Token (Password)</label>
+                                <input type="password" id="regPass" placeholder="Set Secure Code">
+                            </div>
+                            <button class="btn-action-primary" onclick="registerNewEmployeeNode()">
+                                <i class="fa-solid fa-database"></i> COMMIT TO DATA REGISTRY
+                            </button>
                         </div>
+                    </div>
+
+                    <div class="grid-card">
+                        <h3><i class="fa-solid fa-gears"></i> Diagnostic Action Center</h3>
+                        <p class="subtitle" style="margin-bottom: 15px;">Maintain integrity and clear cache states instantly:</p>
+                        <div class="action-btn-cluster">
+                            <button class="btn-action-danger" onclick="purgeEntireWorkforceDatabase()">
+                                <i class="fa-solid fa-dumpster-fire"></i> FLUSH ALL DATA REGISTRIES
+                            </button>
+                            <button class="btn-action-secondary" onclick="seedMockWorkforceData()">
+                                <i class="fa-solid fa-flask"></i> INJECT SAMPLE CORPS ARRAY
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid-card wide-card" style="margin-top: 30px;">
+                    <h3><i class="fa-solid fa-folder-open"></i> Active Registered Nodes</h3>
+                    <div class="table-container">
+                        <table class="premium-table">
+                            <thead>
+                                <tr>
+                                    <th>Node ID</th>
+                                    <th>Registered Full Name</th>
+                                    <th>Token Mask</th>
+                                    <th>Operational Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="workforce-table-body">
+                                </tbody>
+                        </table>
                     </div>
                 </div>
             </section>
 
-            <section id="tab-employees" class="dashboard-section"><h2>Employees Master Node</h2><p>Data streams initializing...</p></section>
-            <section id="tab-live-desk" class="dashboard-section"><h2>Live Desk</h2><p>Data streams initializing...</p></section>
-            <section id="tab-telemetry" class="dashboard-section"><h2>Telemetry Stream Logs</h2><p>Data streams initializing...</p></section>
-            <section id="tab-reports" class="dashboard-section"><h2>Data Analytics Node</h2><p>Data streams initializing...</p></section>
+            <section id="tab-live-desk" class="dashboard-section">
+                <h2><i class="fa-solid fa-id-card-clip"></i> Live Desk Console</h2>
+                <div class="grid-card" style="margin-top: 20px;">
+                    <p style="color: var(--text-dim);">Real-time tracking of workspace activity logs and automated checkout profiles.</p>
+                </div>
+            </section>
+
+            <section id="tab-admin-panel" class="dashboard-section admin-core">
+                <div class="section-header">
+                    <h2><i class="fa-solid fa-shield-halved"></i> System Operational Control Center</h2>
+                </div>
+                <div class="grid-card wide-card" style="margin-top: 20px;">
+                    <h3><i class="fa-solid fa-network-wired"></i> Live Inbound Messenger Stream</h3>
+                    <p class="subtitle">Real-time packet capture streams dispatched from active user interface environments.</p>
+                    <div class="table-container">
+                        <table class="premium-table">
+                            <thead>
+                                <tr>
+                                    <th>Timestamp</th>
+                                    <th>Employee Name</th>
+                                    <th>UID</th>
+                                    <th>Transmitted Message</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-message-stream">
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="tab-telemetry" class="dashboard-section">
+                <h2><i class="fa-solid fa-terminal"></i> Telemetry Stream Logs</h2>
+                <div class="grid-card" style="margin-top: 20px;">
+                    <p style="color: var(--text-dim);">Core cryptographic events, data serialization loops, and connection checks are recorded here.</p>
+                </div>
+            </section>
+
+            <section id="tab-reports" class="dashboard-section">
+                <h2><i class="fa-solid fa-chart-pie"></i> Data Analytics Node</h2>
+                <div class="grid-card" style="margin-top: 20px;">
+                    <p style="color: var(--text-dim);">Generate detailed reports and metrics from local session logs.</p>
+                </div>
+            </section>
+
         </main>
     </div>
 
