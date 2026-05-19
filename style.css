@@ -62,8 +62,8 @@ body { background-color: var(--bg-dark); color: var(--text-main); transition: 0.
 
 .main-content { margin-left: 260px; flex-grow: 1; padding: 40px; min-height: 100vh; }
 .dashboard-section { display: none; }
-.dashboard-section.active { display: block; animation: renderFrame 0.3s ease-out; }
-@keyframes renderFrame { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+.dashboard-section.active { display: block; animation: renderFrame 0.35s ease-out; }
+@keyframes renderFrame { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
 /* HERO ANALYTICS CORE CLOCK LAYER */
 .hero-clock-matrix { background-color: var(--bg-sidebar); border: 1px solid var(--border-color); padding: 25px; border-radius: 16px; text-align: center; margin-bottom: 30px; }
