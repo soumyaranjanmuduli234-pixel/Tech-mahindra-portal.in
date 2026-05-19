@@ -114,7 +114,7 @@ body {
     margin-top: 15px;
     margin-bottom: 5px;
     background: var(--accent-gradient);
-    -webkitbackground-clip: text;
+    -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     filter: drop-shadow(0 2px 8px rgba(0, 242, 254, 0.2));
 }
