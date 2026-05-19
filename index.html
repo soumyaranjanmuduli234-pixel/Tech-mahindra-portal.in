@@ -3,120 +3,129 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tech Mahindra Portal - Quantum v5.0</title>
+    <title>Tech Mahindra Portal - Cyber Defense Node</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
+    <div class="portal-container">
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <img src="logo.png" alt="TechM Logo" class="brand-logo">
+                <h2>Tech MDesk</h2>
+            </div>
+            <nav class="sidebar-menu">
+                <a href="#" class="menu-item active" onclick="switchTab('home')"><i class="fa-solid fa-house"></i> Home Base</a>
+                <a href="#" class="menu-item" onclick="switchTab('employees')"><i class="fa-solid fa-users"></i> Employees Master</a>
+                <a href="#" class="menu-item" onclick="switchTab('live-desk')"><i class="fa-solid fa-id-card-clip"></i> Live Desk</a>
+                <a href="#" class="menu-item" onclick="switchTab('admin-panel')"><i class="fa-solid fa-shield-halved"></i> Admin Control Console</a>
+                <a href="#" class="menu-item" onclick="switchTab('telemetry')"><i class="fa-solid fa-terminal"></i> Telemetry Logs</a>
+                <a href="#" class="menu-item" onclick="switchTab('reports')"><i class="fa-solid fa-chart-pie"></i> Reports Desk</a>
+            </nav>
+            <div class="sidebar-footer">
+                <button class="btn-toggle" onclick="toggleTheme()"><i class="fa-solid fa-moon"></i> Toggle Mode</button>
+                <button class="btn-logout"><i class="fa-solid fa-power-off"></i> Logout Node</button>
+            </div>
+        </aside>
 
-<div id="loadingMatrix" class="hidden">
-    <div class="matrix-loader">
-        <div class="quantum-pulse"></div>
-        <h2 class="neon-text">SYSTEM INITIALIZING...</h2>
-        <p id="loadingStatus">Bypassing Security Layers...</p>
-        <div class="loading-bar-container"><div class="loading-bar-progress"></div></div>
+        <main class="main-content">
+            <section id="tab-home" class="dashboard-section active">
+                <div class="hero-clock-matrix">
+                    <div id="digital-clock" class="quantum-clock">00:00:00 PM</div>
+                    <div class="sync-status">
+                        <p><i class="fa-solid fa-satellite-dish"></i> Portal Node Operational</p>
+                        <small>Target: Soumya Sir (Admin) (System Administrator)</small>
+                    </div>
+                    <div class="shift-timings">
+                        <p>🌅 <strong>First Half Sync In:</strong> 09:30 AM - 10:30 AM</p>
+                        <p>🌌 <strong>Second Half Sync In:</strong> 02:30 PM - 03:30 PM</p>
+                        <p>🚪 <strong>Standard Checkout:</strong> 06:30 PM Onwards</p>
+                    </div>
+                </div>
+
+                <div class="home-grid">
+                    <div class="grid-card calendar-card">
+                        <h3><i class="fa-solid fa-calendar-days"></i> Live Calendar Unit</h3>
+                        <div class="calendar-header">
+                            <span id="calendar-month-year">May 2026</span>
+                        </div>
+                        <div class="calendar-weekdays">
+                            <div>Su</div><div>Mo</div><div>Tu</div><div>We</div><div>Th</div><div>Fr</div><div>Sa</div>
+                        </div>
+                        <div id="calendar-days" class="calendar-days-grid">
+                            </div>
+                    </div>
+
+                    <div class="grid-card notice-card">
+                        <h3><i class="fa-solid fa-bullhorn"></i> Notice Board Broadcast</h3>
+                        <div class="broadcast-stream">
+                            <div class="notice-item critical">
+                                <span class="badge">CRITICAL</span>
+                                <p>System Audit schedule updated for the next evaluation loop.</p>
+                                <small>Issued by: Root Admin</small>
+                            </div>
+                            <div class="notice-item info">
+                                <span class="badge">INFO</span>
+                                <p>Ensure all telemetry instances are pushed before standard checkout logs close.</p>
+                                <small>Issued by: Security Node</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid-card messenger-card">
+                    <h3><i class="fa-solid fa-paper-plane"></i> Employee Messenger Node</h3>
+                    <p class="subtitle">Submit real-time feedback or queries directly to the System Admin control stream.</p>
+                    <div class="messenger-input-group">
+                        <input type="text" id="msg-emp-name" placeholder="Your Full Name">
+                        <input type="text" id="msg-emp-id" placeholder="Employee UID (e.g., TECH41482)">
+                        <textarea id="msg-text" placeholder="Type your secure transmission broadcast here..."></textarea>
+                        <button class="btn-transmit" onclick="transmitMessage()">
+                            <i class="fa-solid fa-tower-broadcast"></i> Transmit Data Packet
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <section id="tab-admin-panel" class="dashboard-section">
+                <div class="section-header">
+                    <h2><i class="fa-solid fa-shield-halved"></i> System Operational Control Center</h2>
+                    <span class="status-pill verified">Root Admin Privileges: Verified</span>
+                </div>
+                
+                <div class="admin-grid">
+                    <div class="grid-card wide-card">
+                        <h3><i class="fa-solid fa-network-wired"></i> Live Inbound Messenger Stream</h3>
+                        <p class="subtitle">Real-time telemetry packet collection from active employee terminals.</p>
+                        <div class="table-container">
+                            <table class="premium-table">
+                                <thead>
+                                    <tr>
+                                        <th>Timestamp</th>
+                                        <th>Employee Name</th>
+                                        <th>UID</th>
+                                        <th>Transmitted Message</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="admin-message-stream">
+                                    <tr id="no-msg-placeholder">
+                                        <td colspan="5" style="text-align: center; color: var(--text-dim);">No inbound data packets found in current queue.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="tab-employees" class="dashboard-section"><h2>Employees Master Node</h2><p>Data streams initializing...</p></section>
+            <section id="tab-live-desk" class="dashboard-section"><h2>Live Desk</h2><p>Data streams initializing...</p></section>
+            <section id="tab-telemetry" class="dashboard-section"><h2>Telemetry Stream Logs</h2><p>Data streams initializing...</p></section>
+            <section id="tab-reports" class="dashboard-section"><h2>Data Analytics Node</h2><p>Data streams initializing...</p></section>
+        </main>
     </div>
-</div>
 
-<div id="loginPage" class="auth-container">
-    <div class="glass-card auth-box cyber-glow">
-        <div class="logo-area">
-            <img src="logo.png" alt="Tech Mahindra Logo" class="auth-logo-ultra">
-            <h1 class="portal-title">TECH MAHINDRA</h1>
-            <p class="subtitle">Secure Node: Quantum-Enterprise</p>
-        </div>
-        
-        <div class="input-group">
-            <input id="loginId" type="text" required placeholder=" ">
-            <label>Access Identity (UID)</label>
-        </div>
-        <div class="input-group">
-            <input id="loginPass" type="password" required placeholder=" ">
-            <label>Authorization Token</label>
-        </div>
-
-        <div class="btn-group">
-            <button class="btn btn-glow-primary" onclick="initiateSecureLogin()">ESTABLISH CONNECTION</button>
-        </div>
-        <div id="loginMsg" class="error-msg"></div>
-    </div>
-</div>
-
-<div id="dashboard" class="dashboard-layout hidden">
-    <aside class="sidebar cyber-border-right">
-        <div class="sidebar-header">
-            <img src="logo.png" alt="Logo" class="sidebar-logo-premium">
-            <h3 class="neon-text">TECH M-DESK</h3>
-        </div>
-        <nav class="nav-menu">
-            <button id="nav-home" class="nav-btn active" onclick="showPage('home', event)">🏠 Command Base</button>
-            <button id="nav-employees" class="nav-btn admin-only" onclick="showPage('employees', event)">👥 Workforce Directory</button>
-            <button id="nav-attendance" class="nav-btn" onclick="showPage('attendance', event)">📅 Presence Registry</button>
-            <button id="nav-messenger" class="nav-btn" onclick="showPage('messenger', event)">💬 Communication Node</button>
-            <button id="nav-control" class="nav-btn admin-only" onclick="showPage('control', event)">⚙️ System Core Panel</button>
-            <button id="nav-report" class="nav-btn" onclick="showPage('report', event)">📊 Telemetry Reports</button>
-        </nav>
-        <div class="sidebar-footer">
-            <button class="action-btn-glow" onclick="toggleTheme()">🌗 Phase Toggle</button>
-            <button class="action-btn-glow logout-btn" onclick="logout()">🚪 Decommission Node</button>
-        </div>
-    </aside>
-
-    <main class="main-content">
-        <section id="homePage" class="dashboard-page"></section>
-        
-        <section id="employeesPage" class="dashboard-page hidden">
-            <h2 class="page-title neon-text">Authorized Workforce Roster</h2>
-            <div id="empList" class="grid-layout"></div>
-        </section>
-        
-        <section id="attendancePage" class="dashboard-page hidden">
-            <h2 class="page-title neon-text">Active Presence Desk</h2>
-            <div id="attendanceStatusMsg" class="status-alert"></div>
-            <div id="attendanceList" class="grid-layout"></div>
-        </section>
-
-        <section id="messengerPage" class="dashboard-page hidden">
-            <h2 class="page-title neon-text">Communication Node</h2>
-            <div class="messenger-container">
-                <div id="employeeMsgBox" class="glass-card messenger-box">
-                    <h3>Transmit Message to Core</h3>
-                    <textarea id="msgContent" placeholder="Enter your transmission details here..."></textarea>
-                    <button class="btn btn-glow-success" onclick="sendMessage()">DEPLOY TRANSMISSION</button>
-                </div>
-                <div id="adminMsgBox" class="admin-only hidden">
-                    <h3>Incoming Transmissions</h3>
-                    <div id="messageStream" class="message-stream"></div>
-                </div>
-            </div>
-        </section>
-
-        <section id="controlPage" class="dashboard-page hidden">
-            <h2 class="page-title neon-text">System Core Override</h2>
-            <div class="admin-grid">
-                <div class="glass-card control-node">
-                    <h3>Notice Broadcast</h3>
-                    <input id="broadcastMsg" placeholder="Enter global notice...">
-                    <button class="btn btn-glow-primary" onclick="setBroadcast()">EMIT BROADCAST</button>
-                </div>
-                <div class="glass-card control-node">
-                    <h3>Window Bypass</h3>
-                    <button id="bypassBtn" class="btn btn-glow-secondary" onclick="toggleAdminBypass()">STATE: INACTIVE</button>
-                </div>
-            </div>
-        </section>
-        
-        <section id="reportPage" class="dashboard-page hidden">
-            <h2 class="page-title neon-text">Telemetry Data Export</h2>
-            <div class="glass-card report-node">
-                <p>Compile and decrypt monthly presence ledgers for verification.</p>
-                <button class="btn btn-glow-primary" onclick="downloadReport()">📥 EXTRACT PDF LEDGER</button>
-            </div>
-        </section>
-    </main>
-</div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
