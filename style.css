@@ -88,10 +88,33 @@
      margin: 0 auto 20px;
      animation: rotateSpin 1s linear infinite;
    }
-   .loader-content-box h4 { font-size: 1.3rem; margin-bottom: 8px; color: #fff; letter-spacing: 0.5px; }
-   .loader-content-box p { font-size: 0.88rem; color: var(--text-dim); margin-bottom: 20px; }
-   .progress-bar-container { width: 100%; height: 5px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden; }
-   .live-progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent-blue), var(--accent-green)); animation: loadProgressFill 10s linear forwards; }
+   .loader-content-box h4 { 
+    font-size: 1.3rem; 
+    margin-bottom: 8px; 
+    color: #fff; 
+    letter-spacing: 0.5px; 
+  }
+
+   .loader-content-box p { 
+    font-size: 0.88rem; 
+    color: var(--text-dim); 
+    margin-bottom: 20px; 
+  }
+
+   .progress-bar-container { 
+    width: 100%; 
+    height: 5px; 
+    background: rgba(255,255,255,0.05); 
+    border-radius: 10px; 
+    overflow: hidden; 
+  }
+
+   .live-progress-fill { 
+    height: 100%; 
+    width: 0%; 
+    background: linear-gradient(90deg, var(--accent-blue), var(--accent-green)); 
+    animation: loadProgressFill 10s linear forwards; 
+  }
    
    /* AUTH LOGIN CARD INTERFACE GATE */
    .auth-gate-wrapper {
@@ -112,9 +135,24 @@
      text-align: center;
      box-shadow: 0 25px 55px rgba(0,0,0,0.6);
    }
-   .auth-logo { width: 95px; margin-bottom: 20px; }
-   .auth-card h2 { font-size: 1.5rem; color: #fff; margin-bottom: 6px; letter-spacing: 0.5px; }
-   .auth-card p { color: var(--text-dim); font-size: 0.88rem; margin-bottom: 30px; }
+
+   .auth-logo { 
+    width: 95px; 
+    margin-bottom: 20px; 
+  }
+
+   .auth-card h2 { 
+    font-size: 1.5rem; 
+    color: #fff; 
+    margin-bottom: 6px; 
+    letter-spacing: 0.5px; 
+  }
+
+   .auth-card p { 
+    color: var(--text-dim); 
+    font-size: 0.88rem; 
+    margin-bottom: 30px; 
+  }
    
    /* NAV-GLOW INTERFACE BUTTON STYLE */
    .nav-btn-glow {
@@ -133,13 +171,22 @@
      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
      box-shadow: var(--shadow-glow);
    }
+   
    .nav-btn-glow:hover:not(:disabled) {
      background: linear-gradient(135deg, var(--accent-blue), var(--accent-green));
      color: #050a12;
      box-shadow: 0 0 25px rgba(0, 242, 254, 0.5);
      transform: translateY(-1px);
    }
-   .nav-btn-glow:disabled { border-color: #24324a; color: var(--text-dim); background: transparent; box-shadow: none; cursor: not-allowed; }
+
+   .nav-btn-glow:disabled { 
+    border-color: #24324a; 
+    color: var(--text-dim); 
+    background: transparent; 
+    box-shadow: none; 
+    cursor: not-allowed; 
+  }
+
    
    /* LAYOUT ENGINE DESIGN */
    .workspace-layout { display: grid; grid-template-columns: 280px 1fr; min-height: 100vh; }

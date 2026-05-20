@@ -425,7 +425,10 @@ function terminateSession() {
   dispatchGlassToast("Session terminated safely.", "success");
 }
 
-// INDIVIDUAL EMPLOYEE SHEET COMPILING AND PACKAGING DYNAMIC PDF ENGINE
+// ========================================================
+// REFACTORED HIGH-FIDELITY PDF EXPORT ENGINES (FIXED OVERLAPS & LOGO SIZES)
+// ========================================================
+
 function generatePremiumProfilePDF(uid) {
   const emp = employeeDatabase.find(e => e.uid === uid);
   if(!emp) return;
@@ -433,108 +436,144 @@ function generatePremiumProfilePDF(uid) {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
 
-  doc.setFillColor(11, 19, 34); doc.rect(0, 0, 210, 45, 'F');
-  doc.setFont("Helvetica", "bold"); doc.setFontSize(18); doc.setTextColor(0, 242, 254);
-  doc.text("OPERATIONS MEMBER FILE OVERVIEW RECORD", 14, 22);
-  doc.setFontSize(9); doc.setFont("Helvetica", "normal"); doc.setTextColor(100, 116, 139);
-  doc.text(`System Data Entry Verification Log: ${new Date().toLocaleString()}`, 14, 34);
+  // Draw Header Background
+  doc.setFillColor(11, 19, 34); 
+  doc.rect(0, 0, 210, 48, 'F');
+  
+  // Header Text Configs (Moved Left to accommodate big logo)
+  doc.setFont("Helvetica", "bold"); 
+  doc.setFontSize(14); 
+  doc.setTextColor(0, 242, 254);
+  doc.text("OPERATIONS MEMBER OVERVIEW PROFILE", 14, 20);
+  
+  doc.setFontSize(8.5); 
+  doc.setFont("Helvetica", "normal"); 
+  doc.setTextColor(100, 116, 139);
+  doc.text(`System Log Entry Timestamp: ${new Date().toLocaleString()}`, 14, 32);
 
   const brandingLogo = new Image();
   brandingLogo.src = 'logo.png';
   brandingLogo.onload = function() {
-    doc.addImage(brandingLogo, 'PNG', 165, 8, 32, 16);
+    // Enhanced Size Allocation: 42 Width, 21 Height (Won't appear small or compressed)
+    doc.addImage(brandingLogo, 'PNG', 154, 12, 42, 21);
     processTemplateLayout();
   };
   brandingLogo.onerror = function() { processTemplateLayout(); };
 
   function processTemplateLayout() {
-    doc.setDrawColor(0, 242, 254); doc.setLineWidth(0.6); doc.line(14, 45, 196, 45);
-    doc.setTextColor(20, 30, 45); doc.setFontSize(11);
-    let currentY = 60;
+    doc.setDrawColor(0, 242, 254); 
+    doc.setLineWidth(0.6); 
+    doc.line(14, 48, 196, 48);
+    
+    doc.setTextColor(20, 30, 45); 
+    doc.setFontSize(11);
+    let currentY = 64;
 
-    doc.setFont("Helvetica", "bold"); doc.text("Employee Access UID:", 14, currentY);
-    doc.setFont("Helvetica", "normal"); doc.text(`${emp.uid}`, 65, currentY);
-    currentY += 10;
-    doc.setFont("Helvetica", "bold"); doc.text("Full Account Identity:", 14, currentY);
-    doc.setFont("Helvetica", "normal"); doc.text(`${emp.name}`, 65, currentY);
-    currentY += 10;
-    doc.setFont("Helvetica", "bold"); doc.text("Personal Mobile Number:", 14, currentY);
-    doc.setFont("Helvetica", "normal"); doc.text(`${emp.mobile}`, 65, currentY);
-    currentY += 10;
-    doc.setFont("Helvetica", "bold"); doc.text("Aadhaar Registry Identity:", 14, currentY);
-    doc.setFont("Helvetica", "normal"); doc.text(`${emp.aadhaar}`, 65, currentY);
-    currentY += 10;
-    doc.setFont("Helvetica", "bold"); doc.text("System Communication Email:", 14, currentY);
-    doc.setFont("Helvetica", "normal"); doc.text(`${emp.email}`, 65, currentY);
-    currentY += 10;
-    doc.setFont("Helvetica", "bold"); doc.text("Father's Name Base:", 14, currentY);
-    doc.setFont("Helvetica", "normal"); doc.text(`${emp.father} (Contact: ${emp.fMobile})`, 65, currentY);
-    currentY += 10;
-    doc.setFont("Helvetica", "bold"); doc.text("Mother's Name Base:", 14, currentY);
-    doc.setFont("Helvetica", "normal"); doc.text(`${emp.mother} (Contact: ${emp.mMobile})`, 65, currentY);
-    currentY += 10;
-    doc.setFont("Helvetica", "bold"); doc.text("Assigned Manager HR:", 14, currentY);
-    doc.setFont("Helvetica", "normal"); doc.text(`${emp.hrName} (Contact: ${emp.hrMobile})`, 65, currentY);
-    currentY += 15;
+    const dataMatrix = [
+      { label: "Employee Access UID:", value: emp.uid },
+      { label: "Full Account Identity:", value: emp.name },
+      { label: "Personal Mobile Number:", value: emp.mobile },
+      { label: "Aadhaar Registry Identity:", value: emp.aadhaar },
+      { label: "System Communication Email:", value: emp.email },
+      { label: "Father's Name Base:", value: `${emp.father} (Contact: ${emp.fMobile})` },
+      { label: "Mother's Name Base:", value: `${emp.mother} (Contact: ${emp.mMobile})` },
+      { label: "Assigned Manager HR:", value: `${emp.hrName} (Contact: ${emp.hrMobile})` }
+    ];
 
-    doc.setDrawColor(226, 232, 240); doc.line(14, currentY, 196, currentY); currentY += 10;
+    dataMatrix.forEach(item => {
+      doc.setFont("Helvetica", "bold"); 
+      doc.text(item.label, 14, currentY);
+      doc.setFont("Helvetica", "normal"); 
+      doc.text(String(item.value), 72, currentY); // Shifted right slightly to prevent labels cut
+      currentY += 10;
+    });
+
+    currentY += 5;
+    doc.setDrawColor(226, 232, 240); 
+    doc.line(14, currentY, 196, currentY); 
+    currentY += 12;
 
     if(emp.image) {
-      doc.setFont("Helvetica", "bold"); doc.text("Profile Photographic Registration Proof:", 14, currentY);
-      doc.addImage(emp.image, 'PNG', 14, currentY + 5, 40, 40);
+      doc.setFont("Helvetica", "bold"); 
+      doc.text("Profile Photographic Registration Proof:", 14, currentY);
+      doc.addImage(emp.image, 'PNG', 14, currentY + 6, 42, 42);
     }
     doc.save(`${emp.uid}_Corporate_Profile.pdf`);
   }
 }
 
-// MASTER ATTENDANCE LOG EXTRACTION DYNAMIC PDF REPORT WITH FULL METRICS
 function triggerShiftReportExport() {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
 
-  doc.setFillColor(11, 19, 34); doc.rect(0, 0, 210, 42, 'F');
-  doc.setFont("Helvetica", "bold"); doc.setFontSize(16); doc.setTextColor(0, 242, 254);
-  doc.text("SHIFT PERFORMANCE LOG & DAILY OPERATIONS REPORT", 14, 22);
+  // Dark Header Panel
+  doc.setFillColor(11, 19, 34); 
+  doc.rect(0, 0, 210, 48, 'F');
+  
+  // Header Text Context
+  doc.setFont("Helvetica", "bold"); 
+  doc.setFontSize(13); 
+  doc.setTextColor(0, 242, 254);
+  doc.text("SHIFT PERFORMANCE LOG & DAILY OPERATIONS REPORT", 14, 24);
 
   const brandingLogo = new Image();
   brandingLogo.src = 'logo.png';
   brandingLogo.onload = function() {
-    doc.addImage(brandingLogo, 'PNG', 165, 8, 32, 16);
+    // Fixed Size Frame mapping
+    doc.addImage(brandingLogo, 'PNG', 154, 12, 42, 21);
     compileTableMetrics();
   };
   brandingLogo.onerror = function() { compileTableMetrics(); };
 
   function compileTableMetrics() {
-    doc.setTextColor(0,0,0); doc.setFontSize(10);
-    let structuralY = 55;
+    doc.setTextColor(0, 0, 0); 
+    doc.setFontSize(10);
+    let structuralY = 62;
     
     doc.setFont("Helvetica", "bold");
-    doc.text("User ID", 14, structuralY); doc.text("Employee Identity (Mobile)", 55, structuralY); doc.text("Check-In Time", 125, structuralY); doc.text("Shift Status", 165, structuralY);
-    doc.setDrawColor(0,0,0); doc.line(14, structuralY+2, 196, structuralY+2);
+    doc.text("User ID", 14, structuralY); 
+    doc.text("Employee Identity (Mobile)", 52, structuralY); 
+    doc.text("Check-In Time", 128, structuralY); 
+    doc.text("Shift Status", 168, structuralY);
     
-    structuralY += 10;
+    doc.setDrawColor(100, 116, 139); 
+    doc.setLineWidth(0.4);
+    doc.line(14, structuralY + 3, 196, structuralY + 3);
+    
+    structuralY += 12;
     doc.setFont("Helvetica", "normal");
     
     if(employeeDatabase.length === 0) {
+      doc.setFont("Helvetica", "italic");
       doc.text("No active employee metrics loaded inside directory registers.", 14, structuralY);
-      structuralY += 10;
+      structuralY += 12;
     } else {
       employeeDatabase.forEach(e => {
-        doc.text(`${e.uid}`, 14, structuralY); doc.text(`${e.name} (${e.mobile})`, 55, structuralY); doc.text(`${e.checkInTime}`, 125, structuralY); doc.text(`${e.status}`, 165, structuralY);
-        structuralY += 10;
+        doc.text(`${e.uid}`, 14, structuralY); 
+        doc.text(`${e.name} (${e.mobile})`, 52, structuralY); 
+        doc.text(`${e.checkInTime}`, 128, structuralY); 
+        doc.text(`${e.status}`, 168, structuralY);
+        structuralY += 9;
       });
     }
 
-    structuralY += 10;
-    doc.setFont("Helvetica", "bold"); doc.setFontSize(12); doc.text("Daily Work Task Submissions Logs", 14, structuralY);
-    doc.line(14, structuralY+2, 196, structuralY+2); structuralY += 10;
-
-    doc.setFontSize(9); doc.setFont("Helvetica", "normal");
+    structuralY += 8;
+    doc.setFont("Helvetica", "bold"); 
+    doc.setFontSize(11); 
+    doc.text("Daily Work Task Submission Logs", 14, structuralY);
+    doc.line(14, structuralY + 3, 196, structuralY + 3); 
+    
+    structuralY += 12;
+    doc.setFontSize(9); 
+    doc.setFont("Helvetica", "normal");
+    
     if(workSubmissions.length === 0) {
+      doc.setFont("Helvetica", "italic");
       doc.text("No active task sheets submitted into system data channels for this operation cycle.", 14, structuralY);
     } else {
       workSubmissions.forEach(t => {
-        doc.text(`[${t.uid}] ${t.name} -> Sheet: ${t.heading} [Completion Progress Vector: ${t.progress}]`, 14, structuralY);
+        let taskLogString = `[${t.uid}] ${t.name} -> Sheet: ${t.heading} [Completion: ${t.progress}]`;
+        doc.text(taskLogString, 14, structuralY);
         structuralY += 8;
       });
     }
