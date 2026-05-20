@@ -1,212 +1,207 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tech Mahindra Portal - Operations Control Center</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Data Entry Operations Management Portal</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css">
 </head>
 <body class="dark-mode">
 
-  <div class="auth-wrapper" id="mainAuthWrapper">
+  <div class="custom-glass-toast-container" id="glassToastBox"></div>
+
+  <div class="global-waiting-overlay" id="globalPageLoader" style="display: none;">
+    <div class="loader-content-box">
+      <div class="premium-spinner"></div>
+      <h4>Please Wait</h4>
+      <p>Syncing secure data tables with system matrix...</p>
+      <div class="progress-bar-container"><div class="live-progress-fill"></div></div>
+    </div>
+  </div>
+
+  <div class="auth-gate-wrapper" id="authGate">
+    <div class="auth-card">
+      <img src="logo.png" alt="Company Logo" class="auth-logo">
+      <h2>MEMBER LOGIN</h2>
+      <p>Data Entry Operations Portal Control Desk</p>
+      <form id="loginForm">
+        <div class="premium-field-group">
+          <span class="field-icon"><i class="fa fa-user"></i></span>
+          <input type="text" id="loginIdentity" placeholder="Enter User ID" required>
+        </div>
+        <div class="premium-field-group">
+          <span class="field-icon"><i class="fa fa-lock"></i></span>
+          <input type="password" id="loginToken" placeholder="Enter Password" required>
+        </div>
+        <button type="submit" class="nav-btn-glow" style="width:100%; margin-top:10px;">Sign In</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="workspace-layout" id="workspaceContainer" style="display: none;">
     
-    <div class="left-panel">
-      <div class="panel-content login-panel-content active" id="loginPanelContent">
-        <img src="logo.png" alt="Logo" class="brand-logo-img">
-        <h1>WELCOME!</h1>
-        <p>Sign in to continue and access the Tech Mahindra Operations Engine.</p>
+    <header class="mobile-top-navbar">
+      <div class="mobile-nav-identity">
+        <img src="logo.png" alt="Logo" class="mobile-mini-logo">
+        <span>TechM Ops</span>
       </div>
+      <button class="mobile-menu-toggle-trigger" onclick="toggleMobileSidebarMenu()"><i class="fa fa-bars"></i></button>
+    </header>
 
-      <div class="panel-content register-panel-content" id="registerPanelContent">
-        <img src="logo.png" alt="Logo" class="brand-logo-img">
-        <h1>WORKSPACE</h1>
-        <p>Manage node directories, dynamic registers, and operational sync matrices.</p>
+    <aside class="sidebar-navigation" id="mainSidebarDrawer">
+      <div class="sidebar-brand">
+        <img src="logo.png" alt="Logo" class="sidebar-logo">
+        <h3>Operations</h3>
       </div>
-    </div>
+      <nav class="nav-menu-stack" id="sidebarNavMenu">
+        </nav>
+      <div class="sidebar-footer">
+        <button class="action-trigger-btn" onclick="terminateSession()"><i class="fa fa-sign-out-alt"></i> Logout</button>
+      </div>
+    </aside>
 
-    <div class="right-panel">
+    <main class="content-viewport">
       
-      <form class="form login-form active" id="loginForm" novalidate>
-        <h2 class="form-title">Sign In</h2>
+      <section id="panel-home-base" class="workspace-panel active">
+        <div class="dashboard-home-center">
+          <h1 class="welcome-banner-glow" id="userWelcomeMessage">Welcome Back, User!</h1>
+          <img src="logo.png" alt="Tech Mahindra Group" class="big-logo-massive">
+          <div class="dashboard-clock" id="live-system-clock">00:00:00 AM</div>
+          <div class="dashboard-calendar-tag" id="live-calendar-date">Loading Calendar Date...</div>
+        </div>
+      </section>
 
-        <div class="input-group">
-          <input type="text" id="loginIdentity" placeholder="Access Identity (UID)" required />
-          <span class="input-icon">👤</span>
+      <section id="panel-employee-master" class="workspace-panel">
+        <div class="panel-header-action">
+          <h2>Employee Registration Management</h2>
+          <button class="nav-btn-glow" onclick="toggleFormDrawer(true)"><i class="fa fa-user-plus"></i> Add New Employee</button>
         </div>
 
-        <div class="input-group">
-          <input type="password" id="loginToken" placeholder="Authorization Token" required />
-          <span class="input-icon">🔒</span>
+        <div class="form-submission-drawer" id="formDrawer" style="display: none;">
+          <div class="drawer-header">
+            <h3>New Employee Registration Profile Form</h3>
+            <button class="close-drawer-btn" onclick="toggleFormDrawer(false)">✕</button>
+          </div>
+          <form id="employeeEntryForm" onsubmit="registerNewEmployee(event)">
+            <div class="form-scroll-box">
+              <div class="form-grid-2">
+                <div class="premium-field-group"><label>First Name*</label><input type="text" id="firstName" required></div>
+                <div class="premium-field-group"><label>Middle Name</label><input type="text" id="middleName"></div>
+                <div class="premium-field-group"><label>Last Name*</label><input type="text" id="lastName" required></div>
+                <div class="premium-field-group"><label>Employee Mobile Number*</label><input type="text" id="empMobileNo" maxlength="10" required></div>
+                <div class="premium-field-group"><label>Aadhaar Card Number (12 Digits)*</label><input type="text" id="empAadhaar" maxlength="12" required></div>
+                <div class="premium-field-group"><label>Employee Email ID*</label><input type="email" id="empEmail" required></div>
+                <div class="premium-field-group"><label>Father's Name*</label><input type="text" id="fatherName" required></div>
+                <div class="premium-field-group"><label>Mother's Name*</label><input type="text" id="motherName" required></div>
+                <div class="premium-field-group"><label>Father's Mobile No*</label><input type="text" id="fatherMobile" maxlength="10" required></div>
+                <div class="premium-field-group"><label>Mother's Mobile No*</label><input type="text" id="motherMobile" maxlength="10" required></div>
+                <div class="premium-field-group"><label>State*</label><input type="text" id="empState" required></div>
+                <div class="premium-field-group"><label>District*</label><input type="text" id="empDistrict" required></div>
+                <div class="premium-field-group"><label>Block*</label><input type="text" id="empBlock" required></div>
+                <div class="premium-field-group"><label>Post Office*</label><input type="text" id="empPostOffice" required></div>
+                <div class="premium-field-group"><label>Pin Code*</label><input type="number" id="empPinCode" required></div>
+                <div class="premium-field-group"><label>Assigned HR Representative*</label><input type="text" id="hrName" required></div>
+                <div class="premium-field-group"><label>HR Mobile Number*</label><input type="text" id="hrMobile" maxlength="10" required></div>
+                <div class="premium-field-group"><label>Upload Photo Image (JPG/PNG)*</label><input type="file" id="empImageFile" accept="image/*" required></div>
+                <div class="premium-field-group"><label>Upload CV/Resume (Optional)</label><input type="file" id="empCvFile" accept=".pdf,.doc,.docx"></div>
+              </div>
+              <div class="automation-display-container">
+                <div class="readonly-box"><span class="field-lbl">System User ID</span><input type="text" id="generatedUID" readonly></div>
+                <div class="readonly-box"><span class="field-lbl">System Password</span><input type="text" id="generatedPassword" readonly></div>
+              </div>
+            </div>
+            <button type="submit" class="nav-btn-glow" style="width:100%; margin-top:15px;">Save Registration Details</button>
+          </form>
         </div>
 
-        <button type="submit" class="btn-primary glow-cyan">Sign In Terminal</button>
-      </form>
+        <div class="premium-table-container">
+          <table class="premium-table">
+            <thead>
+              <tr>
+                <th>User ID</th>
+                <th>Employee Details</th>
+                <th>Verification Data</th>
+                <th>HR Assignment Node</th>
+                <th>Uploaded Files</th>
+                <th>Download Action</th>
+              </tr>
+            </thead>
+            <tbody id="employee-matrix-space"></tbody>
+          </table>
+        </div>
+      </section>
 
-      <form class="form register-form" id="employeeEntryForm" novalidate>
-        <h2 class="form-title">Provisions Node</h2>
+      <section id="panel-live-desk" class="workspace-panel">
+        <h2>Daily Attendance Overview Monitor</h2>
+        <div class="attendance-split-grid">
+          <div class="attendance-card present-node">
+            <h3>Present Employees</h3>
+            <div class="live-scrollable-box" id="present-live-box"></div>
+          </div>
+          <div class="attendance-card absent-node">
+            <h3>Absent Employees</h3>
+            <div class="live-scrollable-box" id="absent-live-box"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="panel-reports-desk" class="workspace-panel">
         
-        <div class="form-grid-scrollable">
-          <div class="form-row-3">
-            <div class="input-group">
-              <input type="text" id="firstName" placeholder="First Name" required />
-            </div>
-            <div class="input-group">
-              <input type="text" id="middleName" placeholder="Middle Name (Opt)" />
-            </div>
-            <div class="input-group">
-              <input type="text" id="lastName" placeholder="Last Name" required />
-            </div>
-          </div>
-
-          <div class="form-row-2">
-            <div class="input-group">
-              <input type="text" id="empAadhaar" placeholder="Aadhaar Card No (12 Digits)" required maxlength="12" />
-              <span class="input-icon">🪪</span>
-            </div>
-            <div class="input-group">
-              <input type="email" id="empEmail" placeholder="Employee Email ID" required />
-              <span class="input-icon">✉</span>
-            </div>
-          </div>
-
-          <div class="form-row-2">
-            <div class="input-group">
-              <input type="text" id="fatherName" placeholder="Father's Name" required />
-              <span class="input-icon">👨</span>
-            </div>
-            <div class="input-group">
-              <input type="text" id="motherName" placeholder="Mother's Name" required />
-              <span class="input-icon">👩</span>
-            </div>
-          </div>
-
-          <div class="form-row-2">
-            <div class="input-group">
-              <input type="tel" id="fatherMobile" placeholder="Father's Mobile No" required maxlength="10" />
-              <span class="input-icon">📞</span>
-            </div>
-            <div class="input-group">
-              <input type="tel" id="motherMobile" placeholder="Mother's Mobile No" required maxlength="10" />
-              <span class="input-icon">📞</span>
-            </div>
-          </div>
-
-          <div class="form-row-3">
-            <div class="input-group">
-              <input type="text" id="empState" placeholder="State Scope" required />
-            </div>
-            <div class="input-group">
-              <input type="text" id="empDistrict" placeholder="District Domain" required />
-            </div>
-            <div class="input-group">
-              <input type="text" id="empBlock" placeholder="Block Area" required />
-            </div>
-          </div>
-
-          <div class="form-row-2">
-            <div class="input-group">
-              <input type="text" id="empPostOffice" placeholder="Post Office Node" required />
-            </div>
-            <div class="input-group">
-              <input type="number" id="empPinCode" placeholder="Pin Pointer Code" required />
-            </div>
-          </div>
-
-          <div class="automation-display-container">
-            <div class="input-group readonly-box">
-              <label class="field-lbl">Auto User ID (Sequential)</label>
-              <input type="text" id="generatedUID" readonly placeholder="Calculated space awaiting..." />
-            </div>
-            <div class="input-group readonly-box">
-              <label class="field-lbl">Auto Crypto Password</label>
-              <input type="text" id="generatedPassword" readonly placeholder="Crypto payload waiting..." />
-            </div>
+        <div id="adminReportSection" style="display:none;">
+          <h2>Operations Report Extraction Desk</h2>
+          <div class="premium-table-container style-padded">
+            <h3>Daily Operations Log Summary Sheet</h3>
+            <p class="description-text">Notice: Complete compilation data extraction updates automatically lock post 06:30 PM shift validation clearance limits.</p>
+            <button id="download-summary-gate" class="nav-btn-glow" disabled onclick="triggerShiftReportExport()"><i class="fa fa-file-download"></i> Download Attendance Sheet PDF (Locked)</button>
           </div>
         </div>
 
-        <button type="submit" class="btn-primary glow-green">Register Companion Entry</button>
-      </form>
-    </div>
-  </div>
-
-  <div class="dashboard-expansion-layer" id="dashboardExtension" style="display: none;">
-    <div class="utility-card-grid">
-      
-      <div class="util-glass-card">
-        <h3><i class="fa fa-calendar-alt"></i> Active Calendar Registry</h3>
-        <div class="calendar-wrapper">
-          <div class="calendar-ctrl">
-            <button id="prevMonth" type="button" class="cal-arrow-btn">◀</button>
-            <span id="monthYearTitle">May 2026</span>
-            <button id="nextMonth" type="button" class="cal-arrow-btn">▶</button>
+        <div id="employeeSubmitSection" style="display:none;">
+          <h2>Daily Data Entry Task Submission Terminal</h2>
+          <div class="modern-glassmorph-container">
+            <form id="task-transmission-form" onsubmit="commitTaskVector(event)">
+              <div class="form-grid-2">
+                <div class="premium-field-group"><label>User ID</label><input type="text" id="task-uid" readonly></div>
+                <div class="premium-field-group"><label>Employee Full Name</label><input type="text" id="task-name" readonly></div>
+              </div>
+              <div class="premium-field-group"><label>Registered Email Address</label><input type="email" id="task-email" readonly></div>
+              <div class="premium-field-group"><label>Data Sheet / Work Task Heading</label><input type="text" id="task-heading" placeholder="e.g., Q1 Spreadsheet Entry Batch A" required></div>
+              <div class="premium-field-group">
+                <label>Task Progress Completion Percentage (%)</label>
+                <select id="task-progress" required>
+                  <option value="25%">25% - Data Entry Initiated</option>
+                  <option value="50%">50% - Half Record Database Filled</option>
+                  <option value="75%">75% - Verification Cross-Check Run</option>
+                  <option value="100%">100% - Fully Compiled & Completed</option>
+                </select>
+              </div>
+              <button type="submit" class="nav-btn-glow" style="width:100%; margin-top:10px;">Submit Work Report</button>
+            </form>
           </div>
-          <div class="calendar-week">
-            <div>Su</div><div>Mo</div><div>Tu</div><div>We</div><div>Th</div><div>Fr</div><div>Sa</div>
-          </div>
-          <div id="calendarDays" class="calendar-days-space"></div>
         </div>
-      </div>
 
-      <div class="util-glass-card controls-stack">
-        <h3><i class="fa fa-sliders-h"></i> Operational Overrides</h3>
-        <button id="printReportBtn" class="btn-primary glow-orange"><i class="fa fa-file-pdf"></i> Print Daily Report Sheet</button>
-        <button id="manualPresentBtn" class="btn-primary glow-cyan"><i class="fa fa-toggle-on"></i> Activate Manual Present Channels</button>
-        <button id="injectSampleBtn" class="btn-primary glow-blue"><i class="fa fa-flask"></i> Inject Test Matrix Data</button>
-        <button id="clearAllUsersBtn" class="btn-primary glow-red"><i class="fa fa-sync-alt"></i> Flush All Registries</button>
-      </div>
-    </div>
+        <div id="adminTasksSection" style="display:none; margin-top:35px;">
+          <h2>Incoming Submitted Work Logs Matrix</h2>
+          <div class="premium-table-container">
+            <table class="premium-table">
+              <thead>
+                <tr>
+                  <th>User ID</th>
+                  <th>Employee Name</th>
+                  <th>Work Task Heading</th>
+                  <th>Progress Level</th>
+                  <th>Submission Time</th>
+                </tr>
+              </thead>
+              <tbody id="admin-task-matrix-rows"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
 
-    <div class="util-glass-card data-table-card">
-      <h3><i class="fa fa-database"></i> Connected Memory Nodes</h3>
-      <div class="table-responsive-wrapper">
-        <table>
-          <thead>
-            <tr>
-              <th>User ID</th>
-              <th>Full Name Identity</th>
-              <th>Aadhaar / Email</th>
-              <th>Parents Param Node</th>
-              <th>Location Boundary Scope</th>
-              <th>Generated Token Pass</th>
-              <th>Control Matrix</th>
-            </tr>
-          </thead>
-          <tbody id="employeeTableBody">
-            <tr><td colspan="7" style="text-align:center; color: var(--muted);">Scanning registries... Empty matrix space.</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <div class="dashboard-footer-controls">
-      <button id="toggleModeBtn" class="foot-btn"><i class="fa fa-sun"></i> Switch Mode Theme</button>
-      <button id="logoutBtn" class="foot-btn logout-alert-trigger"><i class="fa fa-power-off"></i> Terminate Active Session</button>
-    </div>
-  </div>
-
-  <div class="loading-overlay" id="loadingOverlay">
-    <div class="loading-box">
-      <div class="loader-ring"></div>
-      <h3>Please wait...</h3>
-      <p id="loadingMessage">Processing transactions safely.</p>
-      <div class="loading-dots">
-        <span></span><span></span><span></span>
-      </div>
-      <div class="loading-time" id="loadingTime">Processing for 10 seconds</div>
-    </div>
-  </div>
-
-  <div class="custom-alert-overlay" id="customAlertOverlay">
-    <div class="custom-alert-box" id="customAlertBox">
-      <div class="custom-alert-icon" id="customAlertIcon">✓</div>
-      <h3 id="customAlertTitle">Success</h3>
-      <p id="customAlertMessage">Operational system code updated.</p>
-      <button type="button" class="custom-alert-btn" id="customAlertBtn">OK</button>
-    </div>
+    </main>
   </div>
 
   <p class="footer-credit">Made with ♥ by Soumyaranjan</p>
