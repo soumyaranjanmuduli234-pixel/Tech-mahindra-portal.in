@@ -1,12 +1,12 @@
 // ========================================================
-// RE-ARCHITECTURED CENTRAL OPERATIONS DATA DESK
+// RE-ARCHITECTURED CENTRAL OPERATIONS DATA DESK (WITH LOCALSTORAGE)
 // ========================================================
 
 const BASE_UID_START = 24145008000;
 
-// SYSTEM SESSIONS CACHE METRIC STORES
-let employeeDatabase = [];
-let workSubmissions = [];
+// 🔥 SYSTEM SESSIONS CACHE METRIC STORES (LOADS PERMANENTLY FROM BROWSER STORAGE)
+let employeeDatabase = JSON.parse(localStorage.getItem("techM_employees")) || [];
+let workSubmissions = JSON.parse(localStorage.getItem("techM_tasks")) || [];
 let activeSessionUser = { role: "Guest", name: "User", uid: "" };
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -121,6 +121,7 @@ function launchWorkspaceDashboard() {
   setupRoleBasedNavigationMenu();
   renderEmployeeMatrix();
   renderAttendanceVectors();
+  updateAdminTaskViewGrid(); // Ensures previous submissions load on login
   
   if(activeSessionUser.role === "Employee") {
     document.getElementById("task-uid").value = activeSessionUser.uid;
@@ -178,6 +179,8 @@ function toggleFormDrawer(visible) {
 // AUTO CREDENTIALS BUILDER
 function initAutoCredentialGenerator() {
   const firstInput = document.getElementById("firstName");
+  if (!firstInput) return;
+  
   firstInput.addEventListener("input", function() {
     const nameVal = firstInput.value.trim();
     if(nameVal) {
@@ -278,6 +281,10 @@ function registerNewEmployee(e) {
     };
 
     employeeDatabase.push(addedEmployeeObj);
+    
+    // 🔥 PUSH DATA TO HARD LOCALSTORAGE DRIVES
+    localStorage.setItem("techM_employees", JSON.stringify(employeeDatabase));
+
     document.getElementById("employeeEntryForm").reset();
     toggleFormDrawer(false);
     renderEmployeeMatrix();
@@ -337,6 +344,10 @@ function triggerManualAttendanceOverride(uid) {
   if(targetedObj) {
     targetedObj.status = "Present";
     targetedObj.checkInTime = new Date().toLocaleTimeString('en-US', { hour12: false });
+    
+    // 🔥 SYNC ATTENDANCE CHANGES INTO SECURE STORAGE KEYS
+    localStorage.setItem("techM_employees", JSON.stringify(employeeDatabase));
+    
     renderAttendanceVectors();
     dispatchGlassToast(`Attendance verified for ${targetedObj.name}.`, "success");
   }
@@ -375,6 +386,10 @@ function commitTaskVector(e) {
   };
   
   workSubmissions.push(payload);
+  
+  // 🔥 SAVE TASKS MATRIX PERMANENTLY
+  localStorage.setItem("techM_tasks", JSON.stringify(workSubmissions));
+  
   updateAdminTaskViewGrid();
   dispatchGlassToast("Your data entry task sheet log has been synchronized.", "success");
   document.getElementById("task-transmission-form").reset();
