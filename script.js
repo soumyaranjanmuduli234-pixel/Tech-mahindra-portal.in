@@ -1,10 +1,10 @@
 // ========================================================
-// RE-ARCHITECTURED CENTRAL OPERATIONS DATA DESK (WITH LOCALSTORAGE)
+// RE-ARCHITECTURED CENTRAL OPERATIONS DATA DESK (WITH LOCALSTORAGE & AUTO ID CARD)
 // ========================================================
 
 const BASE_UID_START = 24145008000;
 
-// 🔥 SYSTEM SESSIONS CACHE METRIC STORES (LOADS PERMANENTLY FROM BROWSER STORAGE)
+// SYSTEM SESSIONS CACHE METRIC STORES (LOADS PERMANENTLY FROM BROWSER STORAGE)
 let employeeDatabase = JSON.parse(localStorage.getItem("techM_employees")) || [];
 let workSubmissions = JSON.parse(localStorage.getItem("techM_tasks")) || [];
 let activeSessionUser = { role: "Guest", name: "User", uid: "" };
@@ -159,7 +159,6 @@ function setupRoleBasedNavigationMenu() {
 
 // TRANSITION INTERCEPTION GATE FOR NAVIGATION ACTIONS
 function navigatePanelGate(panelId, elementTarget) {
-  // Collapse Mobile menu layout after link tap
   const drawer = document.getElementById("mainSidebarDrawer");
   if(drawer) drawer.classList.remove("mobile-drawer-open");
 
@@ -235,7 +234,10 @@ function renderEmployeeMatrix() {
         <span style="display:block; font-size:0.75rem; color:var(--text-dim);">📄 CV: ${emp.cvName}</span>
       </td>
       <td>
-        <button class="nav-btn-glow" style="padding:6px 12px; font-size:0.75rem;" onclick="generatePremiumProfilePDF('${emp.uid}')"><i class="fa fa-download"></i> Profile PDF</button>
+        <div style="display:flex; flex-direction:column; gap:5px;">
+          <button class="nav-btn-glow" style="padding:4px 8px; font-size:0.72rem;" onclick="generatePremiumProfilePDF('${emp.uid}')"><i class="fa fa-download"></i> Profile PDF</button>
+          <button class="nav-btn-glow" style="padding:4px 8px; font-size:0.72rem; border-color:var(--accent-green); color:var(--accent-green);" onclick="generateAutomaticEmployeeIDCard('${emp.uid}')"><i class="fa fa-id-card"></i> Print ID Card</button>
+        </div>
       </td>
     `;
     containerRows.appendChild(row);
@@ -282,7 +284,7 @@ function registerNewEmployee(e) {
 
     employeeDatabase.push(addedEmployeeObj);
     
-    // 🔥 PUSH DATA TO HARD LOCALSTORAGE DRIVES
+    // PUSH DATA TO HARD LOCALSTORAGE DRIVES
     localStorage.setItem("techM_employees", JSON.stringify(employeeDatabase));
 
     document.getElementById("employeeEntryForm").reset();
@@ -345,7 +347,6 @@ function triggerManualAttendanceOverride(uid) {
     targetedObj.status = "Present";
     targetedObj.checkInTime = new Date().toLocaleTimeString('en-US', { hour12: false });
     
-    // 🔥 SYNC ATTENDANCE CHANGES INTO SECURE STORAGE KEYS
     localStorage.setItem("techM_employees", JSON.stringify(employeeDatabase));
     
     renderAttendanceVectors();
@@ -386,8 +387,6 @@ function commitTaskVector(e) {
   };
   
   workSubmissions.push(payload);
-  
-  // 🔥 SAVE TASKS MATRIX PERMANENTLY
   localStorage.setItem("techM_tasks", JSON.stringify(workSubmissions));
   
   updateAdminTaskViewGrid();
@@ -425,10 +424,6 @@ function terminateSession() {
   dispatchGlassToast("Session terminated safely.", "success");
 }
 
-// ========================================================
-// REFACTORED HIGH-FIDELITY PDF EXPORT ENGINES (FIXED OVERLAPS & LOGO SIZES)
-// ========================================================
-
 function generatePremiumProfilePDF(uid) {
   const emp = employeeDatabase.find(e => e.uid === uid);
   if(!emp) return;
@@ -436,11 +431,9 @@ function generatePremiumProfilePDF(uid) {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
 
-  // Draw Header Background
   doc.setFillColor(11, 19, 34); 
   doc.rect(0, 0, 210, 48, 'F');
   
-  // Header Text Configs (Moved Left to accommodate big logo)
   doc.setFont("Helvetica", "bold"); 
   doc.setFontSize(14); 
   doc.setTextColor(0, 242, 254);
@@ -454,7 +447,6 @@ function generatePremiumProfilePDF(uid) {
   const brandingLogo = new Image();
   brandingLogo.src = 'logo.png';
   brandingLogo.onload = function() {
-    // Enhanced Size Allocation: 42 Width, 21 Height (Won't appear small or compressed)
     doc.addImage(brandingLogo, 'PNG', 154, 12, 42, 21);
     processTemplateLayout();
   };
@@ -484,7 +476,7 @@ function generatePremiumProfilePDF(uid) {
       doc.setFont("Helvetica", "bold"); 
       doc.text(item.label, 14, currentY);
       doc.setFont("Helvetica", "normal"); 
-      doc.text(String(item.value), 72, currentY); // Shifted right slightly to prevent labels cut
+      doc.text(String(item.value), 72, currentY);
       currentY += 10;
     });
 
@@ -506,11 +498,9 @@ function triggerShiftReportExport() {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
 
-  // Dark Header Panel
   doc.setFillColor(11, 19, 34); 
   doc.rect(0, 0, 210, 48, 'F');
   
-  // Header Text Context
   doc.setFont("Helvetica", "bold"); 
   doc.setFontSize(13); 
   doc.setTextColor(0, 242, 254);
@@ -519,7 +509,6 @@ function triggerShiftReportExport() {
   const brandingLogo = new Image();
   brandingLogo.src = 'logo.png';
   brandingLogo.onload = function() {
-    // Fixed Size Frame mapping
     doc.addImage(brandingLogo, 'PNG', 154, 12, 42, 21);
     compileTableMetrics();
   };
@@ -578,5 +567,144 @@ function triggerShiftReportExport() {
       });
     }
     doc.save(`Operations_Shift_Attendance_Report.pdf`);
+  }
+}
+
+// ========================================================
+// 🔥 DYNAMIC ID CARD GENERATION ENGINE (ACCORDING TO SAMPLE DESIGN)
+// ========================================================
+
+function generateAutomaticEmployeeIDCard(uid) {
+  const emp = employeeDatabase.find(e => e.uid === uid);
+  if(!emp) {
+    dispatchGlassToast("Employee records corrupted or missing.", "error");
+    return;
+  }
+
+  const { jsPDF } = window.jspdf;
+  
+  // Standard CR-80 Dimension Specifications (54mm × 86mm Portrait Layout Framework)
+  const doc = new jsPDF({
+    orientation: 'portrait',
+    unit: 'mm',
+    format: [54, 86]
+  });
+
+  // 1. Structural Outer Boundary Card Frame Glow
+  doc.setDrawColor(220, 225, 235);
+  doc.setLineWidth(0.4);
+  doc.rect(0.5, 0.5, 53, 85);
+
+  // 2. Custom Dynamic Header Ribbon Graphic (Brand Theme Accent Maroon/Blue Profile)
+  doc.setFillColor(11, 25, 44); 
+  doc.rect(0.5, 0.5, 53, 15, 'F');
+
+  // Bottom Line Under Header Bar
+  doc.setDrawColor(0, 242, 254);
+  doc.setLineWidth(0.5);
+  doc.line(0.5, 15.5, 53.5, 15.5);
+
+  // 3. Brand Logo Placement Interface
+  const techM_Logo = new Image();
+  techM_Logo.src = 'logo.png';
+  techM_Logo.onload = function() {
+    doc.addImage(techM_Logo, 'PNG', 3, 2.5, 20, 10);
+    renderCardContentData();
+  };
+  techM_Logo.onerror = function() { renderCardContentData(); };
+
+  function renderCardContentData() {
+    // 4. Header Dummy Office Address Placement (Requested Bangalore Dummy Config Vector)
+    doc.setTextColor(255, 255, 255);
+    doc.setFont("Helvetica", "bold");
+    doc.setFontSize(4.2);
+    doc.text("Tech Mahindra Ltd.", 25, 4.5);
+    doc.setFont("Helvetica", "normal");
+    doc.setFontSize(3.2);
+    doc.text("Global Tech Park, Outer Ring Rd,", 25, 7.5);
+    doc.text("Bellandur, Bengaluru, 560103", 25, 10.5);
+    doc.text("Ph: +91 80 6747 0000", 25, 13.5);
+
+    // 5. Employee Display Passport Registration Photograph
+    if(emp.image) {
+      // White shadow/border frame for portrait image
+      doc.setFillColor(255, 255, 255);
+      doc.rect(16.5, 18.5, 21, 23, 'F');
+      doc.setDrawColor(190, 200, 210);
+      doc.setLineWidth(0.25);
+      doc.rect(16.5, 18.5, 21, 23);
+      
+      // Actual Base64 rendering stream
+      doc.addImage(emp.image, 'PNG', 17, 19, 20, 22);
+    }
+
+    // 6. Primary Name & Dynamic Identity Tags 
+    doc.setTextColor(11, 25, 44);
+    doc.setFont("Helvetica", "bold");
+    doc.setFontSize(8.5);
+    doc.text(emp.name.toUpperCase(), 27, 46.5, { align: "center" });
+
+    doc.setTextColor(0, 130, 200);
+    doc.setFont("Helvetica", "bold");
+    doc.setFontSize(6.5);
+    doc.text("Data Entry Operator", 27, 50, { align: "center" });
+
+    // 7. Core Corporate Metadata Matrix Lines
+    doc.setDrawColor(230, 235, 245);
+    doc.setLineWidth(0.2);
+    doc.line(4, 52, 50, 52); // Border delimiter line
+
+    let dataY = 56;
+    doc.setTextColor(60, 70, 85);
+    doc.setFontSize(5);
+
+    const metaFields = [
+      { key: "EMP ID", val: emp.uid },
+      { key: "MOBILE", val: emp.mobile },
+      { key: "EMAIL", val: emp.email },
+      { key: "BLOOD GP", val: "B+" } // Standard operational template placeholder
+    ];
+
+    metaFields.forEach(field => {
+      doc.setFont("Helvetica", "bold");
+      doc.text(`${field.key}:`, 5, dataY);
+      doc.setFont("Helvetica", "normal");
+      doc.text(String(field.val), 18, dataY);
+      dataY += 3.5;
+    });
+
+    // 8. Footer Vector Section (Dummy Scanner Grid Frame & Core Signatures Block)
+    doc.setDrawColor(210, 215, 225);
+    doc.line(4, 71, 50, 71);
+
+    // Dummy Mock Barcode Simulator Patterns (Vertical Stripe Engine lines)
+    let barcodeX = 5;
+    doc.setDrawColor(0, 0, 0);
+    for (let i = 0; i < 24; i++) {
+      let stripeWidth = (i % 3 === 0 || i % 5 === 0) ? 0.4 : 0.15;
+      doc.setLineWidth(stripeWidth);
+      doc.line(barcodeX, 74, barcodeX, 79);
+      barcodeX += 0.75;
+    }
+    doc.setFont("Helvetica", "normal");
+    doc.setFontSize(3.5);
+    doc.text(String(emp.uid), 14, 82, { align: "center" });
+
+    // Administrative Manager Signature Label Framework
+    doc.setDrawColor(120, 130, 145);
+    doc.setLineWidth(0.15);
+    doc.line(36, 78, 49, 78); // Signature baseline line
+    
+    doc.setTextColor(100, 110, 125);
+    doc.setFontSize(3.8);
+    doc.setFont("Helvetica", "italic");
+    doc.text("Soumyaranjan", 42.5, 77, { align: "center" }); // Mock Admin Initials sign
+    doc.setFont("Helvetica", "normal");
+    doc.setFontSize(3.5);
+    doc.text("Authorised Signatory", 42.5, 81.5, { align: "center" });
+
+    // Save Executable stream out to file architecture download buffer
+    doc.save(`ID_Card_${emp.uid}_${emp.name.replace(/\s+/g, '_')}.pdf`);
+    dispatchGlassToast(`ID Card generated successfully for ${emp.name}`, "success");
   }
 }
