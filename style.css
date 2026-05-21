@@ -579,37 +579,138 @@
       RESPONSIVE LAYOUT ENGINE FOR SMARTPHONES & MOBILE TABLETS
       ======================================================== */
    @media (max-width: 992px) {
-     .workspace-layout { grid-template-columns: 1fr; padding-top: 70px; }
+     .workspace-layout { 
+      grid-template-columns: 1fr; 
+      padding-top: 70px; 
+    }
      
      /* DISPLAY FIXED TOP NAV BAR ON SMALL PHONE VIEWPORTS */
      .mobile-top-navbar {
-       display: flex; position: fixed; top: 0; left: 0; right: 0; height: 70px;
-       background: var(--panel-dark); border-bottom: 1px solid var(--border-line);
-       padding: 0 25px; align-items: center; justify-content: space-between; z-index: 999;
+       display: flex; 
+       position: fixed; 
+       top: 0; 
+       left: 0; 
+       right: 0; 
+       height: 70px;
+       background: var(--panel-dark); 
+       border-bottom: 1px solid var(--border-line);
+       padding: 0 25px; 
+       align-items: center; 
+       justify-content: space-between; 
+       z-index: 999;
      }
-     .mobile-nav-identity { display: flex; align-items: center; gap: 10px; font-weight: 600; color: #fff; }
-     .mobile-mini-logo { width: 32px; }
-     .mobile-menu-toggle-trigger { background: transparent; border: none; color: var(--accent-blue); font-size: 1.4rem; cursor: pointer; }
+
+     .mobile-nav-identity { 
+      display: flex; 
+      align-items: center; 
+      gap: 10px; 
+      font-weight: 600; 
+      color: #fff; 
+    }
+
+     .mobile-mini-logo { 
+      width: 32px; 
+    }
+
+     .mobile-menu-toggle-trigger { 
+      background: transparent; 
+      border: none; 
+      color: var(--accent-blue); 
+      font-size: 1.4rem; 
+      cursor: pointer; 
+    }
    
      /* CONVERT DEFAULT SIDEBAR IN FIXED DROPDOWN DRAWER MODES */
      .sidebar-navigation {
-       position: fixed; top: 70px; left: 0; right: 0; bottom: 0; z-index: 998;
+       position: fixed; 
+       top: 70px; 
+       left: 0; 
+       right: 0; 
+       bottom: 0; 
+       z-index: 998;
        transform: translateX(-100%); /* Initial closed translation matrix state */
-       border-right: none; border-bottom: 1px solid var(--border-line);
+       border-right: none; 
+       border-bottom: 1px solid var(--border-line);
      }
-     .sidebar-navigation.mobile-drawer-open { transform: translateX(0); }
-     .sidebar-brand { display: none; } /* Hide duplicate logo headers */
+
+     .sidebar-navigation.mobile-drawer-open { 
+      transform: translateX(0); 
+    }
+
+     .sidebar-brand { 
+      display: none; 
+    } 
+    /* Hide duplicate logo headers */
    
-     .content-viewport { padding: 20px; height: calc(100vh - 70px); }
-     .big-logo-massive { width: 260px; }
-     .welcome-banner-glow { font-size: 1.8rem; }
-     .dashboard-clock { font-size: 2.8rem; }
-     .form-grid-2, .attendance-split-grid, .automation-display-container { grid-template-columns: 1fr; }
+     .content-viewport { 
+      padding: 20px; 
+      height: calc(100vh - 70px); 
+    }
+
+     .big-logo-massive { 
+      width: 260px; 
+    }
+
+     .welcome-banner-glow { 
+      font-size: 1.8rem; 
+    }
+
+     .dashboard-clock { 
+      font-size: 2.8rem; 
+    }
+     .form-grid-2, .attendance-split-grid, .automation-display-container { 
+      grid-template-columns: 1fr; 
+    }
    }
    
    /* LOADER & TEXT KEYFRAMES PIPELINES ENGINE */
-   @keyframes rotateSpin { to { transform: rotate(360deg); } }
-   @keyframes loadProgressFill { from { width: 0%; } to { width: 100%; } }
-   @keyframes slideToastIn { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
-   @keyframes textShiftGlow { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-   @keyframes continuousBoxGlow { from { text-shadow: 0 0 10px rgba(0, 242, 254, 0.2); } to { text-shadow: 0 0 25px rgba(0, 242, 254, 0.6), 0 0 12px rgba(155, 81, 224, 0.4); } }
+   @keyframes rotateSpin { 
+    to { 
+      transform: rotate(360deg); 
+    } 
+  }
+   @keyframes loadProgressFill { 
+    from { 
+      width: 0%; 
+    } 
+
+    to { 
+      width: 100%; 
+    } 
+  }
+
+   @keyframes slideToastIn { 
+    from { 
+      opacity: 0; 
+      transform: translateY(-20px); 
+    } 
+
+    to { 
+      opacity: 1; 
+      transform: translateY(0); 
+    } 
+  }
+
+   @keyframes textShiftGlow { 
+    0% { 
+      background-position: 0% 50%; 
+    } 
+
+    50% { 
+      background-position: 100% 50%; 
+    } 
+
+    100% { 
+      background-position: 0% 50%; 
+    } 
+  }
+
+   @keyframes continuousBoxGlow { 
+    from { 
+      text-shadow: 0 0 10px rgba(0, 242, 254, 0.2); 
+    } 
+
+    to { 
+      text-shadow: 0 0 25px rgba(0, 242, 254, 0.6), 0 0 12px rgba(155, 81, 224, 0.4); 
+    }
+   }
