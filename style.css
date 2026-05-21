@@ -526,16 +526,54 @@
     border-top: 4px solid var(--accent-green); 
   }
   
-   .attendance-card.present-node h3 { color: var(--accent-green); }
-   .attendance-card.absent-node { border-top: 4px solid var(--accent-red); }
-   .attendance-card.absent-node h3 { color: var(--accent-red); }
-   .live-scrollable-box { max-height: 400px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
+   .attendance-card.present-node h3 { 
+    color: var(--accent-green); 
+  }
+
+   .attendance-card.absent-node { 
+    border-top: 4px solid var(--accent-red); 
+  }
+
+   .attendance-card.absent-node h3 { 
+    color: var(--accent-red); 
+  }
+  
+   .live-scrollable-box { 
+    max-height: 400px; 
+    overflow-y: auto; 
+    display: flex; 
+    flex-direction: column; 
+    gap: 15px; 
+  }
    
    /* PROFILES IMAGE STRUCTURING */
-   .employee-row-profile { display: flex; align-items: center; gap: 15px; }
-   .employee-row-profile img { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent-blue); background: #000; }
-   .description-text { color: var(--text-dim); font-size: 0.9rem; margin: 10px 0 20px; }
-   .footer-credit { text-align: center; padding: 25px; font-size: 0.8rem; color: rgba(255,255,255,0.15); }
+    .employee-row-profile { 
+      display: flex; 
+      align-items: center; 
+      gap: 15px; 
+    }
+
+   .employee-row-profile img { 
+    width: 48px; 
+    height: 48px; 
+    border-radius: 50%; 
+    object-fit: cover; 
+    border: 2px solid var(--accent-blue); 
+    background: #000; 
+  }
+
+   .description-text { 
+    color: var(--text-dim); 
+    font-size: 0.9rem; 
+    margin: 10px 0 20px; 
+  }
+
+   .footer-credit { 
+    text-align: center; 
+    padding: 25px; 
+    font-size: 0.8rem; 
+    color: rgba(255,255,255,0.15); 
+  }
    
    /* ========================================================
       RESPONSIVE LAYOUT ENGINE FOR SMARTPHONES & MOBILE TABLETS
