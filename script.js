@@ -24,6 +24,15 @@ document.addEventListener("DOMContentLoaded", () => {
   initializeLiveSystemClockEngine();
   setupLoginFormListener();
   initializeAntiInspectSecurityShield(); // DevTools protection active
+  
+  // [LOCALSTORAGE PERSISTENCE INITIALIZATION MATRIX]
+  if (localStorage.getItem("emp_db")) {
+    employeeDatabase = JSON.parse(localStorage.getItem("emp_db"));
+  }
+  if (localStorage.getItem("task_db")) {
+    submittedTasks = JSON.parse(localStorage.getItem("task_db"));
+  }
+  
   updateAnalyticsCounterWidgets();
   
   document.getElementById('firstName').addEventListener('input', computeSystemCredentialsVector);
@@ -137,7 +146,7 @@ function setupLoginFormListener() {
           setTimeout(() => {
             document.getElementById("loginForm").querySelector("button").removeAttribute("disabled");
             securityThreatCounter = 0;
-          }, 30000); // 30 seconds login freeze window lockout simulation
+          }, 30000); // 30 seconds login freeze lockout simulation
         } else {
           triggerPremiumGlassToast(`Authentication Failed. Attempt ${securityThreatCounter}/3.`, "error-type");
         }
@@ -164,6 +173,9 @@ function executeAuthenticationSequence(role, displayIdentity, profileReference =
     
     if(role === 'admin') {
       logSecurityIntegrityEvent(`SYSTEM: Admin terminal initialized safely by node authority.`, "success-log");
+      refreshEmployeeDataMatrixSpace();
+      refreshIncomingSubmittedWorkLogsTable();
+      synchronizeAttendanceDashboardWidgets();
     }
     triggerPremiumGlassToast(`Access Granted Session: Master ${role.toUpperCase()} Node Live.`, "success-type");
   }, 3000);
@@ -262,9 +274,6 @@ function computeSystemCredentialsVector() {
 }
 
 // 🗂️ BASE64 VISUAL FILE HANDLING AND PROCESSING INTERFACES
-let capturedPhotoBase64 = "";
-let capturedCvBase64 = "";
-
 function registerNewEmployee(event) {
   event.preventDefault();
   
@@ -293,6 +302,10 @@ function registerNewEmployee(event) {
     };
     
     employeeDatabase.push(newProfile);
+    
+    // [LOCALSTORAGE SYNC CONTROL MATRIX]
+    localStorage.setItem("emp_db", JSON.stringify(employeeDatabase));
+    
     logSecurityIntegrityEvent(`SYSTEM: Registered new workforce identity code ${uid}.`, "success-log");
     refreshEmployeeDataMatrixSpace();
     synchronizeAttendanceDashboardWidgets();
@@ -303,7 +316,6 @@ function registerNewEmployee(event) {
     triggerPremiumGlassToast(`Profile Registration Complete: ${uid}`, "success-type");
   };
 
-  // Convert files to base64 synchronously via Promise blocks
   const readAsDataURL = (file) => {
     if (!file) return Promise.resolve("");
     return new Promise((resolve) => {
@@ -320,6 +332,7 @@ function registerNewEmployee(event) {
 
 function refreshEmployeeDataMatrixSpace() {
   const container = document.getElementById("employee-matrix-space");
+  if (!container) return;
   container.innerHTML = "";
   
   employeeDatabase.forEach((emp) => {
@@ -391,6 +404,7 @@ function synchronizeAttendanceDashboardWidgets() {
   const presentBox = document.getElementById("present-live-box");
   const absentBox = document.getElementById("absent-live-box");
   
+  if (!presentBox || !absentBox) return;
   presentBox.innerHTML = ""; absentBox.innerHTML = "";
   
   employeeDatabase.forEach(emp => {
@@ -425,6 +439,10 @@ function commitTaskVector(event) {
   };
   
   submittedTasks.push(newTaskLog);
+  
+  // [LOCALSTORAGE TASK REGISTER TRACK SYNC]
+  localStorage.setItem("task_db", JSON.stringify(submittedTasks));
+  
   refreshIncomingSubmittedWorkLogsTable();
   updateAnalyticsCounterWidgets();
   
@@ -435,6 +453,7 @@ function commitTaskVector(event) {
 
 function refreshIncomingSubmittedWorkLogsTable() {
   const container = document.getElementById("admin-task-matrix-rows");
+  if (!container) return;
   container.innerHTML = "";
   
   submittedTasks.forEach(task => {
@@ -464,13 +483,15 @@ function refreshIncomingSubmittedWorkLogsTable() {
   });
 }
 
-// 🗂️ TASK ACTION WORKFLOW MANAGER (APPROVE/REJECT ROUTINES)
 function auditProcessTaskAction(taskId, finalVerdict) {
   const targetTask = submittedTasks.find(t => t.taskId === taskId);
   if (!targetTask) return;
 
   targetTask.status = finalVerdict;
   targetTask.audited = true;
+  
+  // Update state storage
+  localStorage.setItem("task_db", JSON.stringify(submittedTasks));
   
   logSecurityIntegrityEvent(`AUDIT: Data record payload row [${taskId}] marked as ${finalVerdict.toUpperCase()}.`, "warn-log");
   refreshIncomingSubmittedWorkLogsTable();
@@ -480,6 +501,7 @@ function auditProcessTaskAction(taskId, finalVerdict) {
 
 function evaluateShiftReportDownloadPrivilege() {
   const triggerBtn = document.getElementById("download-summary-gate");
+  if (!triggerBtn) return;
   if(employeeDatabase.length > 0) {
     triggerBtn.removeAttribute("disabled");
   } else {
@@ -578,15 +600,20 @@ function triggerShiftReportExport() {
 function initializeLiveSystemClockEngine() {
   setInterval(() => {
     const calendarInstance = new Date();
-    document.getElementById("live-system-clock").textContent = calendarInstance.toLocaleTimeString();
+    const clockEl = document.getElementById("live-system-clock");
+    const dateEl = document.getElementById("live-calendar-date");
     
-    const optionSchemes = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-    document.getElementById("live-calendar-date").textContent = calendarInstance.toLocaleDateString("en-US", optionSchemes);
+    if(clockEl) clockEl.textContent = calendarInstance.toLocaleTimeString();
+    if(dateEl) {
+      const optionSchemes = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+      dateEl.textContent = calendarInstance.toLocaleDateString("en-US", optionSchemes);
+    }
   }, 1000);
 }
 
 function triggerPremiumGlassToast(messageContent, messageTypeClass) {
   const container = document.getElementById("glassToastBox");
+  if (!container) return;
   const toast = document.createElement("div");
   
   toast.className = `glass-toast-notification ${messageTypeClass}`;
