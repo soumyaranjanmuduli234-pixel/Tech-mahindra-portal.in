@@ -15,7 +15,7 @@
   <div class="global-waiting-overlay" id="globalPageLoader" style="display: none;">
     <div class="loader-content-box">
       <div class="premium-spinner"></div>
-      <h4>Please Wait</h4>
+      <h4>Securing Environment</h4>
       <p>Syncing secure data tables with system matrix...</p>
       <div class="progress-bar-container"><div class="live-progress-fill"></div></div>
     </div>
@@ -29,11 +29,11 @@
       <form id="loginForm">
         <div class="premium-field-group">
           <span class="field-icon"><i class="fa fa-user"></i></span>
-          <input type="text" id="loginIdentity" placeholder="Enter User ID" required>
+          <input type="text" id="loginIdentity" placeholder="Enter User ID" required autocomplete="off">
         </div>
         <div class="premium-field-group">
           <span class="field-icon"><i class="fa fa-lock"></i></span>
-          <input type="password" id="loginToken" placeholder="Enter Password" required>
+          <input type="password" id="loginToken" placeholder="Enter Password" required autocomplete="off">
         </div>
         <button type="submit" class="nav-btn-glow" style="width:100%; margin-top:10px;">Sign In</button>
       </form>
@@ -55,8 +55,7 @@
         <img src="logo.png" alt="Logo" class="sidebar-logo">
         <h3>Operations</h3>
       </div>
-      <nav class="nav-menu-stack" id="sidebarNavMenu">
-        </nav>
+      <nav class="nav-menu-stack" id="sidebarNavMenu"></nav>
       <div class="sidebar-footer">
         <button class="action-trigger-btn" onclick="terminateSession()"><i class="fa fa-sign-out-alt"></i> Logout</button>
       </div>
@@ -148,7 +147,6 @@
       </section>
 
       <section id="panel-reports-desk" class="workspace-panel">
-        
         <div id="adminReportSection" style="display:none;">
           <h2>Operations Report Extraction Desk</h2>
           <div class="premium-table-container style-padded">
