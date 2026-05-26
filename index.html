@@ -10,8 +10,23 @@
 </head>
 <body class="dark-mode">
 
+  <!-- Toast Notification System -->
   <div class="custom-glass-toast-container" id="glassToastBox"></div>
 
+  <!-- Real-time File Preview Modal Container -->
+  <div class="glass-modal-overlay" id="filePreviewModal" style="display: none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modalPreviewTitle">Document Preview Engine</h3>
+        <button class="close-modal-btn" onclick="closeFilePreviewModal()">✕</button>
+      </div>
+      <div class="modal-body-content" id="modalPreviewBody">
+        <!-- Rendered dynamically by JavaScript -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Synchronized 3-Second Overlay Loader -->
   <div class="global-waiting-overlay" id="globalPageLoader" style="display: none;">
     <div class="loader-content-box">
       <div class="premium-spinner"></div>
@@ -21,6 +36,7 @@
     </div>
   </div>
 
+  <!-- Auth Security Gate -->
   <div class="auth-gate-wrapper" id="authGate">
     <div class="auth-card">
       <img src="logo.png" alt="Company Logo" class="auth-logo">
@@ -40,8 +56,10 @@
     </div>
   </div>
 
+  <!-- Core Workspace Layout -->
   <div class="workspace-layout" id="workspaceContainer" style="display: none;">
     
+    <!-- Mobile Top Navigation Bar Barricade -->
     <header class="mobile-top-navbar">
       <div class="mobile-nav-identity">
         <img src="logo.png" alt="Logo" class="mobile-mini-logo">
@@ -50,20 +68,56 @@
       <button class="mobile-menu-toggle-trigger" onclick="toggleMobileSidebarMenu()"><i class="fa fa-bars"></i></button>
     </header>
 
+    <!-- Sidebar Control Desk -->
     <aside class="sidebar-navigation" id="mainSidebarDrawer">
       <div class="sidebar-brand">
         <img src="logo.png" alt="Logo" class="sidebar-logo">
         <h3>Operations</h3>
       </div>
       <nav class="nav-menu-stack" id="sidebarNavMenu"></nav>
+      
+      <!-- Premium Theme Switcher Node -->
+      <div class="theme-toggle-container">
+        <button class="theme-toggle-btn" id="systemThemeToggleBtn" onclick="toggleSystemThemeMode()">
+          <i class="fa fa-moon"></i> <span>Dark Core Live</span>
+        </button>
+      </div>
+
       <div class="sidebar-footer">
         <button class="action-trigger-btn" onclick="terminateSession()"><i class="fa fa-sign-out-alt"></i> Logout</button>
       </div>
     </aside>
 
+    <!-- Content Engine Desk -->
     <main class="content-viewport">
       
+      <!-- Panel: Home Dashboard -->
       <section id="panel-home-base" class="workspace-panel active">
+        <!-- Interactive Analytics Widgets Layer -->
+        <div class="analytics-summary-grid">
+          <div class="stat-widget-card gradient-blue">
+            <div class="widget-icon-box"><i class="fa fa-users"></i></div>
+            <div class="widget-data">
+              <h3 id="statTotalWorkforce">00</h3>
+              <p>Total Workforce</p>
+            </div>
+          </div>
+          <div class="stat-widget-card gradient-green">
+            <div class="widget-icon-box"><i class="fa fa-satellite-dish"></i></div>
+            <div class="widget-data">
+              <h3 id="statActiveNodes">00</h3>
+              <p>Active Shift Nodes</p>
+            </div>
+          </div>
+          <div class="stat-widget-card gradient-purple">
+            <div class="widget-icon-box"><i class="fa fa-tasks"></i></div>
+            <div class="widget-data">
+              <h3 id="statPendingBatches">00</h3>
+              <p>Pending Task Batches</p>
+            </div>
+          </div>
+        </div>
+
         <div class="dashboard-home-center">
           <h1 class="welcome-banner-glow" id="userWelcomeMessage">Welcome Back, User!</h1>
           <img src="logo.png" alt="Tech Mahindra Group" class="big-logo-massive">
@@ -72,6 +126,7 @@
         </div>
       </section>
 
+      <!-- Panel: Employee Master Database -->
       <section id="panel-employee-master" class="workspace-panel">
         <div class="panel-header-action">
           <h2>Employee Registration Management</h2>
@@ -132,6 +187,7 @@
         </div>
       </section>
 
+      <!-- Panel: Attendance Realtime Monitor -->
       <section id="panel-live-desk" class="workspace-panel">
         <h2>Daily Attendance Overview Monitor</h2>
         <div class="attendance-split-grid">
@@ -146,13 +202,14 @@
         </div>
       </section>
 
+      <!-- Panel: Task Report Center -->
       <section id="panel-reports-desk" class="workspace-panel">
         <div id="adminReportSection" style="display:none;">
           <h2>Operations Report Extraction Desk</h2>
           <div class="premium-table-container style-padded">
             <h3>Daily Operations Log Summary Sheet</h3>
             <p class="description-text">Notice: Complete compilation data extraction updates automatically lock post 06:30 PM shift validation clearance limits.</p>
-            <button id="download-summary-gate" class="nav-btn-glow" disabled onclick="triggerShiftReportExport()"><i class="fa fa-file-download"></i> Download Attendance Sheet PDF (Locked)</button>
+            <button id="download-summary-gate" class="nav-btn-glow" disabled onclick="triggerShiftReportExport()"><i class="fa fa-file-download"></i> Download Attendance Sheet PDF</button>
           </div>
         </div>
 
@@ -180,6 +237,7 @@
           </div>
         </div>
 
+        <!-- Interactive Admin Task Matrix with Actions Shield -->
         <div id="adminTasksSection" style="display:none; margin-top:35px;">
           <h2>Incoming Submitted Work Logs Matrix</h2>
           <div class="premium-table-container">
@@ -191,10 +249,25 @@
                   <th>Work Task Heading</th>
                   <th>Progress Level</th>
                   <th>Submission Time</th>
+                  <th>Verification Audit Action</th>
                 </tr>
               </thead>
               <tbody id="admin-task-matrix-rows"></tbody>
             </table>
+          </div>
+        </div>
+        
+        <!-- Live System Integrity & Threat Feed Logs (Admin View Terminal) -->
+        <div id="securityThreatTerminalSection" style="display:none; margin-top:35px;">
+          <h2>Security Perimeter Integrity Feed</h2>
+          <div class="terminal-shell-box">
+            <div class="terminal-header-row">
+              <span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span>
+              <p class="terminal-title">live_threat_protection_stream.log</p>
+            </div>
+            <div class="terminal-body-rows" id="systemSecurityLogConsole">
+              <!-- Security telemetry stream lines injected dynamically -->
+            </div>
           </div>
         </div>
       </section>
