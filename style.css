@@ -52,9 +52,29 @@
    }
    
    /* ANALYTICS WIDGETS LAYOUT INTERFACE */
-   .analytics-summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; margin-bottom: 30px; }
-   .stat-widget-card { background: var(--panel-dark); border: 1px solid var(--border-line); border-radius: var(--radius); padding: 20px; display: flex; align-items: center; gap: 20px; box-shadow: var(--shadow-glow); transition: 0.3s; }
-   .stat-widget-card:hover { transform: translateY(-3px); }
+   .analytics-summary-grid { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); 
+    gap: 20px; 
+    margin-bottom: 30px; 
+  }
+
+   .stat-widget-card { 
+    background: var(--panel-dark); 
+    border: 1px solid var(--border-line); 
+    border-radius: var(--radius); 
+    padding: 20px; 
+    display: flex; 
+    align-items: center; 
+    gap: 20px; 
+    box-shadow: var(--shadow-glow); 
+    transition: 0.3s; 
+  }
+
+   .stat-widget-card:hover { 
+    transform: translateY(-3px); 
+  }
+  
    .widget-icon-box { width: 50px; height: 50px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; }
    .gradient-blue .widget-icon-box { background: rgba(0, 242, 254, 0.1); color: var(--accent-blue); }
    .gradient-green .widget-icon-box { background: rgba(0, 245, 160, 0.1); color: var(--accent-green); }
