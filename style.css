@@ -108,10 +108,16 @@
     font-family: 'JetBrains Mono', monospace; 
   }
   
-   .widget-data p { font-size: 0.8rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; }
+   .widget-data p { 
+    font-size: 0.8rem; 
+    color: var(--text-dim); 
+    text-transform: uppercase; 
+    letter-spacing: 0.5px; 
+  }
    
    /* THEME SWITCHER CONTROLS ROW */
-   .theme-toggle-container { padding: 15px 25px; border-top: 1px solid var(--border-line); }
+   .theme-toggle-container { 
+    padding: 15px 25px; border-top: 1px solid var(--border-line); }
    .theme-toggle-btn { width: 100%; padding: 10px; background: rgba(255,255,255,0.02); border: 1px solid var(--border-line); color: var(--text-main); border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; font-weight: 500; font-size: 0.88rem; transition: 0.25s; }
    .theme-toggle-btn:hover { background: rgba(0,242,254,0.05); border-color: var(--accent-blue); }
    
