@@ -75,11 +75,39 @@
     transform: translateY(-3px); 
   }
   
-   .widget-icon-box { width: 50px; height: 50px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; }
-   .gradient-blue .widget-icon-box { background: rgba(0, 242, 254, 0.1); color: var(--accent-blue); }
-   .gradient-green .widget-icon-box { background: rgba(0, 245, 160, 0.1); color: var(--accent-green); }
-   .gradient-purple .widget-icon-box { background: rgba(155, 81, 224, 0.1); color: var(--accent-purple); }
-   .widget-data h3 { font-size: 1.8rem; font-weight: 700; line-height: 1; margin-bottom: 4px; font-family: 'JetBrains Mono', monospace; }
+   .widget-icon-box { 
+    width: 50px; 
+    height: 50px; 
+    border-radius: 10px; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    font-size: 1.3rem; 
+  }
+
+   .gradient-blue .widget-icon-box { 
+    background: rgba(0, 242, 254, 0.1); 
+    color: var(--accent-blue); 
+  }
+
+   .gradient-green .widget-icon-box { 
+    background: rgba(0, 245, 160, 0.1); 
+    color: var(--accent-green); 
+  }
+
+   .gradient-purple .widget-icon-box { 
+    background: rgba(155, 81, 224, 0.1); 
+    color: var(--accent-purple); 
+  }
+
+   .widget-data h3 { 
+    font-size: 1.8rem; 
+    font-weight: 700; 
+    line-height: 1; 
+    margin-bottom: 4px; 
+    font-family: 'JetBrains Mono', monospace; 
+  }
+  
    .widget-data p { font-size: 0.8rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; }
    
    /* THEME SWITCHER CONTROLS ROW */
