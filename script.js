@@ -2,9 +2,9 @@
    INTEGRATED GLASSMORPHISM DESK ENGINE - CORE SECURED ARCHITECTURE
    ======================================================== */
 
-// Base64 Obfuscated Credentials Protection Shield Matrices
-const _authMatrixNode = 'YWRtaW4='; // admin
-const _tokenMatrixNode = 'YWRtaW4xMjM='; // admin123
+// Base64 Obfuscated Credentials Protection Shield Matrices (Updated for SOUMYA-ETH-44 / Soumya@7890)
+const _authMatrixNode = btoa('SOUMYA-ETH-44');
+const _tokenMatrixNode = btoa('Soumya@7890');
 
 // Core Database Array Infrastructure
 let employeeDatabase = [];
@@ -24,6 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initializeLiveSystemClockEngine();
   setupLoginFormListener();
   initializeAntiInspectSecurityShield(); // DevTools protection active
+  initializeWindowActionControls();
   
   // [LOCALSTORAGE PERSISTENCE INITIALIZATION MATRIX]
   if (localStorage.getItem("emp_db")) {
@@ -42,6 +43,63 @@ document.addEventListener("DOMContentLoaded", () => {
 /* ========================================================
    🛡️ ADVANCED BRUTE-FORCE PROTECTION & SECURE ANTI-INSPECT ENGINE
    ======================================================== */
+function initializeWindowActionControls() {
+  const windowShells = document.querySelectorAll('.workspace-panel, .modal-card, .window-shell');
+
+  windowShells.forEach((shell) => {
+    if (shell.querySelector('.window-control-header-bar')) return;
+
+    const windowTitle = shell.dataset.windowTitle || shell.id || 'Control Desk';
+    const headerBar = document.createElement('div');
+    headerBar.className = 'window-control-header-bar';
+    headerBar.innerHTML = `
+      <div class="window-control-title">${windowTitle}</div>
+      <div class="window-control-actions">
+        <button type="button" class="win-ctrl-btn minimize" data-window-action="minimize" aria-label="Minimize"></button>
+        <button type="button" class="win-ctrl-btn maximize" data-window-action="maximize" aria-label="Maximize"></button>
+        <button type="button" class="win-ctrl-btn close" data-window-action="close" aria-label="Close"></button>
+      </div>
+    `;
+
+    shell.insertBefore(headerBar, shell.firstChild);
+
+    headerBar.querySelectorAll('.win-ctrl-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const action = btn.dataset.windowAction;
+
+        if (action === 'minimize') {
+          shell.classList.toggle('window-minimized');
+          if (shell.classList.contains('window-minimized')) {
+            shell.style.maxHeight = '74px';
+            shell.style.overflow = 'hidden';
+          } else {
+            shell.style.maxHeight = '';
+            shell.style.overflow = '';
+          }
+        } else if (action === 'maximize') {
+          shell.classList.toggle('window-maximized');
+          if (shell.classList.contains('window-maximized')) {
+            shell.style.position = 'fixed';
+            shell.style.inset = '16px';
+            shell.style.zIndex = '10004';
+            shell.style.width = 'calc(100vw - 32px)';
+            shell.style.height = 'calc(100vh - 32px)';
+          } else {
+            shell.style.position = '';
+            shell.style.inset = '';
+            shell.style.zIndex = '';
+            shell.style.width = '';
+            shell.style.height = '';
+          }
+        } else if (action === 'close') {
+          shell.classList.add('window-closed');
+          shell.style.display = 'none';
+        }
+      });
+    });
+  });
+}
+
 function initializeAntiInspectSecurityShield() {
   document.addEventListener("contextmenu", (e) => {
     e.preventDefault();
@@ -258,18 +316,30 @@ function toggleFormDrawer(visibilityState) {
 }
 
 function computeSystemCredentialsVector() {
-  const fName = document.getElementById('firstName').value.trim();
-  const mobile = document.getElementById('empMobileNo').value.trim();
-  
-  if(fName.length >= 2 && mobile.length >= 4) {
-    const rawUidString = "TM-" + fName.substring(0,3).toUpperCase() + mobile.substring(mobile.length - 4);
-    const generatedPassStr = "Pass@" + mobile.substring(0,4);
-    
-    document.getElementById("generatedUID").value = rawUidString;
-    document.getElementById("generatedPassword").value = generatedPassStr;
+  const firstNameInput = document.getElementById('firstName');
+  const mobileInput = document.getElementById('empMobileNo');
+  const uidInput = document.getElementById('generatedUID');
+  const passwordInput = document.getElementById('generatedPassword');
+
+  const fName = firstNameInput.value.trim();
+  const mobile = mobileInput.value.trim();
+
+  if (fName.length >= 2 && mobile.length >= 4) {
+    let baseUid = "TM-" + fName.substring(0, 3).toUpperCase() + mobile.substring(mobile.length - 4);
+    let suffix = 1;
+
+    while (employeeDatabase.some((entry) => entry.uid === baseUid)) {
+      baseUid = `${baseUid}-${suffix}`;
+      suffix += 1;
+    }
+
+    const generatedPassStr = "Pass@" + mobile.substring(0, 4);
+
+    uidInput.value = baseUid;
+    passwordInput.value = generatedPassStr;
   } else {
-    document.getElementById("generatedUID").value = "";
-    document.getElementById("generatedPassword").value = "";
+    uidInput.value = "";
+    passwordInput.value = "";
   }
 }
 

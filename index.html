@@ -10,10 +10,8 @@
 </head>
 <body class="dark-mode">
 
-  <!-- Toast Notification System -->
   <div class="custom-glass-toast-container" id="glassToastBox"></div>
 
-  <!-- Real-time File Preview Modal Container -->
   <div class="glass-modal-overlay" id="filePreviewModal" style="display: none;">
     <div class="modal-card">
       <div class="modal-header">
@@ -21,12 +19,10 @@
         <button class="close-modal-btn" onclick="closeFilePreviewModal()">✕</button>
       </div>
       <div class="modal-body-content" id="modalPreviewBody">
-        <!-- Rendered dynamically by JavaScript -->
-      </div>
+        </div>
     </div>
   </div>
 
-  <!-- Synchronized 3-Second Overlay Loader -->
   <div class="global-waiting-overlay" id="globalPageLoader" style="display: none;">
     <div class="loader-content-box">
       <div class="premium-spinner"></div>
@@ -36,7 +32,6 @@
     </div>
   </div>
 
-  <!-- Auth Security Gate -->
   <div class="auth-gate-wrapper" id="authGate">
     <div class="auth-card">
       <img src="logo.png" alt="Company Logo" class="auth-logo">
@@ -56,10 +51,8 @@
     </div>
   </div>
 
-  <!-- Core Workspace Layout -->
   <div class="workspace-layout" id="workspaceContainer" style="display: none;">
     
-    <!-- Mobile Top Navigation Bar Barricade -->
     <header class="mobile-top-navbar">
       <div class="mobile-nav-identity">
         <img src="logo.png" alt="Logo" class="mobile-mini-logo">
@@ -68,7 +61,6 @@
       <button class="mobile-menu-toggle-trigger" onclick="toggleMobileSidebarMenu()"><i class="fa fa-bars"></i></button>
     </header>
 
-    <!-- Sidebar Control Desk -->
     <aside class="sidebar-navigation" id="mainSidebarDrawer">
       <div class="sidebar-brand">
         <img src="logo.png" alt="Logo" class="sidebar-logo">
@@ -76,7 +68,6 @@
       </div>
       <nav class="nav-menu-stack" id="sidebarNavMenu"></nav>
       
-      <!-- Premium Theme Switcher Node -->
       <div class="theme-toggle-container">
         <button class="theme-toggle-btn" id="systemThemeToggleBtn" onclick="toggleSystemThemeMode()">
           <i class="fa fa-moon"></i> <span>Dark Core Live</span>
@@ -88,12 +79,9 @@
       </div>
     </aside>
 
-    <!-- Content Engine Desk -->
     <main class="content-viewport">
       
-      <!-- Panel: Home Dashboard -->
       <section id="panel-home-base" class="workspace-panel active">
-        <!-- Interactive Analytics Widgets Layer -->
         <div class="analytics-summary-grid">
           <div class="stat-widget-card gradient-blue">
             <div class="widget-icon-box"><i class="fa fa-users"></i></div>
@@ -126,7 +114,6 @@
         </div>
       </section>
 
-      <!-- Panel: Employee Master Database -->
       <section id="panel-employee-master" class="workspace-panel">
         <div class="panel-header-action">
           <h2>Employee Registration Management</h2>
@@ -158,7 +145,7 @@
                 <div class="premium-field-group"><label>Pin Code*</label><input type="number" id="empPinCode" required></div>
                 <div class="premium-field-group"><label>Assigned HR Representative*</label><input type="text" id="hrName" required></div>
                 <div class="premium-field-group"><label>HR Mobile Number*</label><input type="text" id="hrMobile" maxlength="10" required></div>
-                <div class="premium-field-group"><label>Assigned HR Registration Number*</label><input type="text" id="empAadhaar" maxlength="12" required></div>
+                <div class="premium-field-group"><label>Assigned HR Registration Number*</label><input type="text" id="hrRegNo" required></div>
                 <div class="premium-field-group"><label>Upload Photo Image (JPG/PNG)*</label><input type="file" id="empImageFile" accept="image/*" required></div>
                 <div class="premium-field-group"><label>Upload CV/Resume (Optional)</label><input type="file" id="empCvFile" accept=".pdf,.doc,.docx"></div>
               </div>
@@ -188,7 +175,6 @@
         </div>
       </section>
 
-      <!-- Panel: Attendance Realtime Monitor -->
       <section id="panel-live-desk" class="workspace-panel">
         <h2>Daily Attendance Overview Monitor</h2>
         <div class="attendance-split-grid">
@@ -203,7 +189,6 @@
         </div>
       </section>
 
-      <!-- Panel: Task Report Center -->
       <section id="panel-reports-desk" class="workspace-panel">
         <div id="adminReportSection" style="display:none;">
           <h2>Operations Report Extraction Desk</h2>
@@ -238,7 +223,6 @@
           </div>
         </div>
 
-        <!-- Interactive Admin Task Matrix with Actions Shield -->
         <div id="adminTasksSection" style="display:none; margin-top:35px;">
           <h2>Incoming Submitted Work Logs Matrix</h2>
           <div class="premium-table-container">
@@ -258,7 +242,6 @@
           </div>
         </div>
         
-        <!-- Live System Integrity & Threat Feed Logs (Admin View Terminal) -->
         <div id="securityThreatTerminalSection" style="display:none; margin-top:35px;">
           <h2>Security Perimeter Integrity Feed</h2>
           <div class="terminal-shell-box">
@@ -267,8 +250,7 @@
               <p class="terminal-title">live_threat_protection_stream.log</p>
             </div>
             <div class="terminal-body-rows" id="systemSecurityLogConsole">
-              <!-- Security telemetry stream lines injected dynamically -->
-            </div>
+              </div>
           </div>
         </div>
       </section>
@@ -280,4 +262,3 @@
   <script src="script.js"></script>
 </body>
 </html>
-
