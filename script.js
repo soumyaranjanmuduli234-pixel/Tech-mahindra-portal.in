@@ -3,7 +3,7 @@
    ======================================================== */
 
 // Base64 Obfuscated Credentials Protection Shield Matrices (Updated for SOUMYA-ETH-44 / Soumya@7890)
-const _authMatrixNode = btoa('SOUMYA-ETH-44');
+const _authMatrixNode = btoa('SOUMYA');
 const _tokenMatrixNode = btoa('Soumya@7890');
 
 // Core Database Array Infrastructure
