@@ -12,6 +12,7 @@ let submittedTasks = [];
 let authenticatedUser = null;
 let securityThreatCounter = 0;
 let isCurrentThemeLight = false;
+let currentEmployeeFilter = '';
 
 const navigationMasterMatrix = [
   { id: 'panel-home-base', label: 'Dashboard Control', icon: 'fa-th-large', visibleFor: ['admin', 'employee'] },
@@ -38,6 +39,10 @@ document.addEventListener("DOMContentLoaded", () => {
   
   document.getElementById('firstName').addEventListener('input', computeSystemCredentialsVector);
   document.getElementById('empMobileNo').addEventListener('input', computeSystemCredentialsVector);
+  const searchInput = document.getElementById('employeeSearchInput');
+  if (searchInput) {
+    searchInput.addEventListener('input', (event) => filterEmployeeMatrix(event.target.value));
+  }
 });
 
 /* ========================================================
@@ -368,6 +373,7 @@ function registerNewEmployee(event) {
       cvData: cvBase64 || null,
       photoName: photoInput?.name || "image.png",
       cvName: cvInput?.name || "No CV attached",
+      cvType: cvInput?.type || '',
       attendanceStatus: Math.random() > 0.3 ? "Present" : "Absent"
     };
     
@@ -400,12 +406,23 @@ function registerNewEmployee(event) {
   });
 }
 
-function refreshEmployeeDataMatrixSpace() {
+function refreshEmployeeDataMatrixSpace(filterText = "") {
   const container = document.getElementById("employee-matrix-space");
   if (!container) return;
   container.innerHTML = "";
-  
-  employeeDatabase.forEach((emp) => {
+
+  const normalizedFilter = (filterText || currentEmployeeFilter || '').trim().toLowerCase();
+  const filteredEmployees = normalizedFilter
+    ? employeeDatabase.filter(emp => {
+        return [emp.uid, emp.firstName, emp.lastName, emp.empEmail, emp.hrName]
+          .join(' ')
+          .toLowerCase()
+          .includes(normalizedFilter);
+      })
+    : employeeDatabase;
+
+  filteredEmployees.forEach((emp) => {
+    const hasCv = Boolean(emp.cvData && emp.cvData !== "");
     const tr = document.createElement("tr");
     tr.innerHTML = `
       <td><strong style="color:var(--accent-blue); font-family:'JetBrains Mono';">${emp.uid}</strong></td>
@@ -413,7 +430,7 @@ function refreshEmployeeDataMatrixSpace() {
         <div class="employee-row-profile">
           <img src="${emp.photoData ? emp.photoData : 'https://via.placeholder.com/44'}" alt="Avatar">
           <div>
-            <div><strong>${emp.firstName}</strong></div>
+            <div><strong>${emp.firstName} ${emp.lastName}</strong></div>
             <div style="font-size:0.78rem; color:var(--text-dim);"><i class="fa fa-phone"></i> ${emp.empMobileNo}</div>
           </div>
         </div>
@@ -427,8 +444,9 @@ function refreshEmployeeDataMatrixSpace() {
         <div style="font-size:0.78rem; color:var(--text-dim);"><i class="fa fa-phone"></i> ${emp.hrMobile}</div>
       </td>
       <td>
-        <div style="font-size:0.8rem; color:var(--accent-green); cursor:pointer;" onclick="launchFilePreviewModal('${emp.uid}', 'photo')"><i class="fa fa-image"></i> Preview Image</div>
-        <div style="font-size:0.8rem; color:var(--accent-purple); cursor:pointer;" onclick="launchFilePreviewModal('${emp.uid}', 'cv')"><i class="fa fa-file-pdf"></i> View CV Document</div>
+        <div class="file-action-link" onclick="launchFilePreviewModal('${emp.uid}', 'photo')"><i class="fa fa-image"></i> Preview Image</div>
+        <div class="file-action-link" onclick="launchFilePreviewModal('${emp.uid}', 'cv')"><i class="fa fa-file-pdf"></i> View CV Document</div>
+        ${hasCv ? `<div class="file-action-link" onclick="downloadEmployeeCv('${emp.uid}')"><i class="fa fa-download"></i> Download CV</div>` : ''}
       </td>
       <td>
         <button class="nav-btn-glow" style="padding:6px 12px; font-size:0.78rem;" onclick="generateSingleEmployeeIdCardPdf('${emp.uid}')">
@@ -439,6 +457,12 @@ function refreshEmployeeDataMatrixSpace() {
     container.appendChild(tr);
   });
 }
+
+function filterEmployeeMatrix(filterText) {
+  currentEmployeeFilter = filterText;
+  refreshEmployeeDataMatrixSpace(filterText);
+}
+
 
 /* ========================================================
    🗂️ REAL-TIME FILE PREVIEW MODAL LOGIC LAYER
@@ -458,8 +482,15 @@ function launchFilePreviewModal(uid, documentClass) {
     title.textContent = `Image Attachment Preview: ${emp.uid}`;
     body.innerHTML = emp.photoData ? `<img src="${emp.photoData}" class="preview-modal-avatar"><h4>File Name: ${emp.photoName}</h4>` : `<p>No upload matrix reference found.</p>`;
   } else {
-    title.textContent = `CV File Attachment Meta: ${emp.uid}`;
-    body.innerHTML = `<i class="fa fa-file-invoice preview-file-icon-massive"></i><h4>Document Name: ${emp.cvName}</h4><p style="color:var(--text-dim); margin-top:5px;">File Reference Map Stream Loaded (Base64 Binary Safe Mode)</p>`;
+    title.textContent = `CV File Attachment Preview: ${emp.uid}`;
+    if (emp.cvData && emp.cvType === 'application/pdf') {
+      body.innerHTML = `
+        <div style="text-align:left; margin-bottom:12px;"><strong>Document:</strong> ${emp.cvName}</div>
+        <iframe src="${emp.cvData}" style="width:100%; height:360px; border:1px solid rgba(255,255,255,0.12); border-radius:10px;"></iframe>
+      `;
+    } else {
+      body.innerHTML = `<i class="fa fa-file-invoice preview-file-icon-massive"></i><h4>Document Name: ${emp.cvName}</h4><p style="color:var(--text-dim); margin-top:5px;">CV display is available as download only for this file type.</p>`;
+    }
   }
 }
 
@@ -571,11 +602,20 @@ function auditProcessTaskAction(taskId, finalVerdict) {
 
 function evaluateShiftReportDownloadPrivilege() {
   const triggerBtn = document.getElementById("download-summary-gate");
-  if (!triggerBtn) return;
-  if(employeeDatabase.length > 0) {
-    triggerBtn.removeAttribute("disabled");
-  } else {
-    triggerBtn.setAttribute("disabled", "true");
+  const exportBtn = document.getElementById("exportMasterPdfBtn");
+  if (triggerBtn) {
+    if (employeeDatabase.length > 0) {
+      triggerBtn.removeAttribute("disabled");
+    } else {
+      triggerBtn.setAttribute("disabled", "true");
+    }
+  }
+  if (exportBtn) {
+    if (employeeDatabase.length > 0) {
+      exportBtn.removeAttribute("disabled");
+    } else {
+      exportBtn.setAttribute("disabled", "true");
+    }
   }
 }
 
@@ -604,8 +644,7 @@ function generateSingleEmployeeIdCardPdf(uid) {
   doc.setTextColor(255, 255, 255); doc.setFontSize(12); doc.text(`${emp.firstName}`, 52.5, 72, { align: "center" });
   doc.setTextColor(100, 116, 139); doc.setFontSize(9); doc.text(`System UID: ${emp.uid}`, 52.5, 77, { align: "center" });
 
-  doc.setDrawColor(255, 255, 255); doc.setGState(new doc.GState({ opacity: 0.06 })); doc.line(10, 84, 95, 84);
-  doc.setGState(new doc.GState({ opacity: 1.0 }));
+  doc.setDrawColor(255, 255, 255); doc.setLineWidth(0.1); doc.line(10, 84, 95, 84);
 
   doc.setFont("Helvetica", "normal"); doc.setTextColor(100, 116, 139); doc.setFontSize(8);
   doc.text("Mobile No:", 12, 92); doc.text("Email ID:", 12, 98);
@@ -624,6 +663,76 @@ function generateSingleEmployeeIdCardPdf(uid) {
 
   doc.save(`ID_Card_${emp.uid}.pdf`);
   triggerPremiumGlassToast(`Exported Identity Card: ${emp.uid}`, "success-type");
+}
+
+function downloadEmployeeCv(uid) {
+  const emp = employeeDatabase.find(e => e.uid === uid);
+  if (!emp || !emp.cvData) {
+    triggerPremiumGlassToast('No CV document found for this employee.', 'error-type');
+    return;
+  }
+
+  const downloadLink = document.createElement('a');
+  downloadLink.href = emp.cvData;
+  downloadLink.download = emp.cvName || `${uid}_CV`;
+  document.body.appendChild(downloadLink);
+  downloadLink.click();
+  document.body.removeChild(downloadLink);
+  triggerPremiumGlassToast(`Downloaded CV file for ${uid}.`, 'success-type');
+}
+
+function generateEmployeeMasterPdf() {
+  if (employeeDatabase.length === 0) {
+    triggerPremiumGlassToast('No employees available to export.', 'error-type');
+    return;
+  }
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const margin = 40;
+  let y = 60;
+
+  doc.setFont('Helvetica', 'bold');
+  doc.setFontSize(18);
+  doc.text('Tech Mahindra Employee Master Export', pageWidth / 2, y, { align: 'center' });
+  y += 24;
+  doc.setFontSize(10);
+  doc.setTextColor(100, 116, 139);
+  doc.text(`Export generated on ${new Date().toLocaleString()}`, margin, y);
+  y += 24;
+
+  doc.setFont('Helvetica', 'bold');
+  doc.setTextColor(0, 0, 0);
+  doc.text('UID', margin, y);
+  doc.text('Name', margin + 120, y);
+  doc.text('Email', margin + 260, y);
+  doc.text('HR Owner', margin + 430, y);
+  doc.text('Attendance', margin + 520, y);
+  y += 16;
+  doc.setLineWidth(0.5);
+  doc.line(margin, y, pageWidth - margin, y);
+  y += 18;
+
+  doc.setFont('Helvetica', 'normal');
+  const rows = employeeDatabase.map(emp => [emp.uid, `${emp.firstName} ${emp.lastName}`, emp.empEmail, emp.hrName, emp.attendanceStatus]);
+
+  rows.forEach((row) => {
+    if (y > doc.internal.pageSize.getHeight() - 80) {
+      doc.addPage();
+      y = 50;
+    }
+
+    doc.text(row[0], margin, y);
+    doc.text(row[1], margin + 120, y);
+    doc.text(row[2], margin + 260, y);
+    doc.text(row[3], margin + 430, y);
+    doc.text(row[4], margin + 520, y);
+    y += 16;
+  });
+
+  doc.save('Employee_Master_Export.pdf');
+  triggerPremiumGlassToast('Employee Master PDF exported successfully.', 'success-type');
 }
 
 function triggerShiftReportExport() {

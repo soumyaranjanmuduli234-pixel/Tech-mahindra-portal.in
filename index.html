@@ -120,6 +120,13 @@
           <button class="nav-btn-glow" onclick="toggleFormDrawer(true)"><i class="fa fa-user-plus"></i> Add New Employee</button>
         </div>
 
+        <div class="panel-toolbar">
+          <div class="toolbar-search-box">
+            <input type="search" id="employeeSearchInput" placeholder="Search by UID, name, email, HR" autocomplete="off">
+          </div>
+          <button class="nav-btn-glow" id="exportMasterPdfBtn" disabled onclick="generateEmployeeMasterPdf()"><i class="fa fa-file-pdf"></i> Export Employee Master PDF</button>
+        </div>
+
         <div class="form-submission-drawer" id="formDrawer" style="display: none;">
           <div class="drawer-header">
             <h3>New Employee Registration Profile Form</h3>

@@ -568,6 +568,47 @@
     box-shadow: none; 
     cursor: not-allowed; 
   }
+
+   .panel-toolbar {
+     display: flex;
+     flex-wrap: wrap;
+     align-items: center;
+     gap: 12px;
+     margin: 18px 0 22px;
+   }
+
+   .toolbar-search-box {
+     flex: 1 1 260px;
+   }
+
+   .toolbar-search-box input {
+     width: 100%;
+     padding: 12px 16px;
+     border-radius: 12px;
+     border: 1px solid rgba(255,255,255,0.12);
+     background: rgba(255,255,255,0.04);
+     color: var(--text-main);
+     font-size: 0.95rem;
+   }
+
+   .toolbar-search-box input:focus {
+     outline: none;
+     border-color: var(--accent-blue);
+     background: rgba(255,255,255,0.08);
+   }
+
+   .file-action-link {
+     display: block;
+     font-size: 0.82rem;
+     color: var(--accent-green);
+     cursor: pointer;
+     margin: 6px 0;
+     transition: color 0.25s ease;
+   }
+
+   .file-action-link:hover {
+     color: var(--accent-blue);
+   }
    
    /* CONTENT MATRIX SYSTEM WORKSPACE */
    .workspace-layout { 
